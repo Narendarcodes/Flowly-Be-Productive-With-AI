@@ -1,16 +1,16 @@
-var M = { exports: {} }, z = M.exports, G;
-function Q() {
-  return G || (G = 1, (function(s, n) {
-    (function(t, l) {
-      l(s);
-    })(typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : z, function(t) {
+var N = { exports: {} }, z = N.exports, W;
+function J() {
+  return W || (W = 1, (function(e, s) {
+    (function(r, n) {
+      n(e);
+    })(typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : z, function(r) {
       if (!(globalThis.chrome && globalThis.chrome.runtime && globalThis.chrome.runtime.id))
         throw new Error("This script should only be loaded in a browser extension.");
       if (globalThis.browser && globalThis.browser.runtime && globalThis.browser.runtime.id)
-        t.exports = globalThis.browser;
+        r.exports = globalThis.browser;
       else {
-        const l = "The message port closed before a response was received.", u = (c) => {
-          const x = {
+        const n = "The message port closed before a response was received.", g = (m) => {
+          const f = {
             alarms: {
               clear: {
                 minArgs: 0,
@@ -682,175 +682,175 @@ function Q() {
               }
             }
           };
-          if (Object.keys(x).length === 0)
+          if (Object.keys(f).length === 0)
             throw new Error("api-metadata.json has not been included in browser-polyfill");
-          class p extends WeakMap {
-            constructor(r, a = void 0) {
-              super(a), this.createItem = r;
+          class k extends WeakMap {
+            constructor(t, l = void 0) {
+              super(l), this.createItem = t;
             }
-            get(r) {
-              return this.has(r) || this.set(r, this.createItem(r)), super.get(r);
+            get(t) {
+              return this.has(t) || this.set(t, this.createItem(t)), super.get(t);
             }
           }
-          const v = (e) => e && typeof e == "object" && typeof e.then == "function", y = (e, r) => (...a) => {
-            c.runtime.lastError ? e.reject(new Error(c.runtime.lastError.message)) : r.singleCallbackArg || a.length <= 1 && r.singleCallbackArg !== !1 ? e.resolve(a[0]) : e.resolve(a);
-          }, E = (e) => e == 1 ? "argument" : "arguments", D = (e, r) => function(i, ...A) {
-            if (A.length < r.minArgs)
-              throw new Error(`Expected at least ${r.minArgs} ${E(r.minArgs)} for ${e}(), got ${A.length}`);
-            if (A.length > r.maxArgs)
-              throw new Error(`Expected at most ${r.maxArgs} ${E(r.maxArgs)} for ${e}(), got ${A.length}`);
-            return new Promise((d, h) => {
-              if (r.fallbackToNoCallback)
+          const S = (o) => o && typeof o == "object" && typeof o.then == "function", y = (o, t) => (...l) => {
+            m.runtime.lastError ? o.reject(new Error(m.runtime.lastError.message)) : t.singleCallbackArg || l.length <= 1 && t.singleCallbackArg !== !1 ? o.resolve(l[0]) : o.resolve(l);
+          }, I = (o) => o == 1 ? "argument" : "arguments", K = (o, t) => function(i, ...d) {
+            if (d.length < t.minArgs)
+              throw new Error(`Expected at least ${t.minArgs} ${I(t.minArgs)} for ${o}(), got ${d.length}`);
+            if (d.length > t.maxArgs)
+              throw new Error(`Expected at most ${t.maxArgs} ${I(t.maxArgs)} for ${o}(), got ${d.length}`);
+            return new Promise((h, b) => {
+              if (t.fallbackToNoCallback)
                 try {
-                  i[e](...A, y({
-                    resolve: d,
-                    reject: h
-                  }, r));
-                } catch (o) {
-                  console.warn(`${e} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, o), i[e](...A), r.fallbackToNoCallback = !1, r.noCallback = !0, d();
+                  i[o](...d, y({
+                    resolve: h,
+                    reject: b
+                  }, t));
+                } catch (a) {
+                  console.warn(`${o} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, a), i[o](...d), t.fallbackToNoCallback = !1, t.noCallback = !0, h();
                 }
-              else r.noCallback ? (i[e](...A), d()) : i[e](...A, y({
-                resolve: d,
-                reject: h
-              }, r));
+              else t.noCallback ? (i[o](...d), h()) : i[o](...d, y({
+                resolve: h,
+                reject: b
+              }, t));
             });
-          }, B = (e, r, a) => new Proxy(r, {
-            apply(i, A, d) {
-              return a.call(A, e, ...d);
+          }, $ = (o, t, l) => new Proxy(t, {
+            apply(i, d, h) {
+              return l.call(d, o, ...h);
             }
           });
-          let P = Function.call.bind(Object.prototype.hasOwnProperty);
-          const L = (e, r = {}, a = {}) => {
-            let i = /* @__PURE__ */ Object.create(null), A = {
-              has(h, o) {
-                return o in e || o in i;
+          let L = Function.call.bind(Object.prototype.hasOwnProperty);
+          const R = (o, t = {}, l = {}) => {
+            let i = /* @__PURE__ */ Object.create(null), d = {
+              has(b, a) {
+                return a in o || a in i;
               },
-              get(h, o, b) {
-                if (o in i)
-                  return i[o];
-                if (!(o in e))
+              get(b, a, w) {
+                if (a in i)
+                  return i[a];
+                if (!(a in o))
                   return;
-                let m = e[o];
-                if (typeof m == "function")
-                  if (typeof r[o] == "function")
-                    m = B(e, e[o], r[o]);
-                  else if (P(a, o)) {
-                    let C = D(o, a[o]);
-                    m = B(e, e[o], C);
+                let A = o[a];
+                if (typeof A == "function")
+                  if (typeof t[a] == "function")
+                    A = $(o, o[a], t[a]);
+                  else if (L(l, a)) {
+                    let T = K(a, l[a]);
+                    A = $(o, o[a], T);
                   } else
-                    m = m.bind(e);
-                else if (typeof m == "object" && m !== null && (P(r, o) || P(a, o)))
-                  m = L(m, r[o], a[o]);
-                else if (P(a, "*"))
-                  m = L(m, r[o], a["*"]);
+                    A = A.bind(o);
+                else if (typeof A == "object" && A !== null && (L(t, a) || L(l, a)))
+                  A = R(A, t[a], l[a]);
+                else if (L(l, "*"))
+                  A = R(A, t[a], l["*"]);
                 else
-                  return Object.defineProperty(i, o, {
+                  return Object.defineProperty(i, a, {
                     configurable: !0,
                     enumerable: !0,
                     get() {
-                      return e[o];
+                      return o[a];
                     },
-                    set(C) {
-                      e[o] = C;
+                    set(T) {
+                      o[a] = T;
                     }
-                  }), m;
-                return i[o] = m, m;
+                  }), A;
+                return i[a] = A, A;
               },
-              set(h, o, b, m) {
-                return o in i ? i[o] = b : e[o] = b, !0;
+              set(b, a, w, A) {
+                return a in i ? i[a] = w : o[a] = w, !0;
               },
-              defineProperty(h, o, b) {
-                return Reflect.defineProperty(i, o, b);
+              defineProperty(b, a, w) {
+                return Reflect.defineProperty(i, a, w);
               },
-              deleteProperty(h, o) {
-                return Reflect.deleteProperty(i, o);
+              deleteProperty(b, a) {
+                return Reflect.deleteProperty(i, a);
               }
-            }, d = Object.create(e);
-            return new Proxy(d, A);
-          }, N = (e) => ({
-            addListener(r, a, ...i) {
-              r.addListener(e.get(a), ...i);
+            }, h = Object.create(o);
+            return new Proxy(h, d);
+          }, P = (o) => ({
+            addListener(t, l, ...i) {
+              t.addListener(o.get(l), ...i);
             },
-            hasListener(r, a) {
-              return r.hasListener(e.get(a));
+            hasListener(t, l) {
+              return t.hasListener(o.get(l));
             },
-            removeListener(r, a) {
-              r.removeListener(e.get(a));
+            removeListener(t, l) {
+              t.removeListener(o.get(l));
             }
-          }), W = new p((e) => typeof e != "function" ? e : function(a) {
-            const i = L(a, {}, {
+          }), q = new k((o) => typeof o != "function" ? o : function(l) {
+            const i = R(l, {}, {
               getContent: {
                 minArgs: 0,
                 maxArgs: 0
               }
             });
-            e(i);
-          }), _ = new p((e) => typeof e != "function" ? e : function(a, i, A) {
-            let d = !1, h, o = new Promise((R) => {
-              h = function(w) {
-                d = !0, R(w);
+            o(i);
+          }), D = new k((o) => typeof o != "function" ? o : function(l, i, d) {
+            let h = !1, b, a = new Promise((E) => {
+              b = function(p) {
+                h = !0, E(p);
               };
-            }), b;
+            }), w;
             try {
-              b = e(a, i, h);
-            } catch (R) {
-              b = Promise.reject(R);
+              w = o(l, i, b);
+            } catch (E) {
+              w = Promise.reject(E);
             }
-            const m = b !== !0 && v(b);
-            if (b !== !0 && !m && !d)
+            const A = w !== !0 && S(w);
+            if (w !== !0 && !A && !h)
               return !1;
-            const C = (R) => {
-              R.then((w) => {
-                A(w);
-              }, (w) => {
-                let F;
-                w && (w instanceof Error || typeof w.message == "string") ? F = w.message : F = "An unexpected error occurred", A({
+            const T = (E) => {
+              E.then((p) => {
+                d(p);
+              }, (p) => {
+                let B;
+                p && (p instanceof Error || typeof p.message == "string") ? B = p.message : B = "An unexpected error occurred", d({
                   __mozWebExtensionPolyfillReject__: !0,
-                  message: F
+                  message: B
                 });
-              }).catch((w) => {
-                console.error("Failed to send onMessage rejected reply", w);
+              }).catch((p) => {
+                console.error("Failed to send onMessage rejected reply", p);
               });
             };
-            return C(m ? b : o), !0;
-          }), q = ({
-            reject: e,
-            resolve: r
-          }, a) => {
-            c.runtime.lastError ? c.runtime.lastError.message === l ? r() : e(new Error(c.runtime.lastError.message)) : a && a.__mozWebExtensionPolyfillReject__ ? e(new Error(a.message)) : r(a);
-          }, O = (e, r, a, ...i) => {
-            if (i.length < r.minArgs)
-              throw new Error(`Expected at least ${r.minArgs} ${E(r.minArgs)} for ${e}(), got ${i.length}`);
-            if (i.length > r.maxArgs)
-              throw new Error(`Expected at most ${r.maxArgs} ${E(r.maxArgs)} for ${e}(), got ${i.length}`);
-            return new Promise((A, d) => {
-              const h = q.bind(null, {
-                resolve: A,
-                reject: d
+            return T(A ? w : a), !0;
+          }), V = ({
+            reject: o,
+            resolve: t
+          }, l) => {
+            m.runtime.lastError ? m.runtime.lastError.message === n ? t() : o(new Error(m.runtime.lastError.message)) : l && l.__mozWebExtensionPolyfillReject__ ? o(new Error(l.message)) : t(l);
+          }, _ = (o, t, l, ...i) => {
+            if (i.length < t.minArgs)
+              throw new Error(`Expected at least ${t.minArgs} ${I(t.minArgs)} for ${o}(), got ${i.length}`);
+            if (i.length > t.maxArgs)
+              throw new Error(`Expected at most ${t.maxArgs} ${I(t.maxArgs)} for ${o}(), got ${i.length}`);
+            return new Promise((d, h) => {
+              const b = V.bind(null, {
+                resolve: d,
+                reject: h
               });
-              i.push(h), a.sendMessage(...i);
+              i.push(b), l.sendMessage(...i);
             });
-          }, H = {
+          }, Y = {
             devtools: {
               network: {
-                onRequestFinished: N(W)
+                onRequestFinished: P(q)
               }
             },
             runtime: {
-              onMessage: N(_),
-              onMessageExternal: N(_),
-              sendMessage: O.bind(null, "sendMessage", {
+              onMessage: P(D),
+              onMessageExternal: P(D),
+              sendMessage: _.bind(null, "sendMessage", {
                 minArgs: 1,
                 maxArgs: 3
               })
             },
             tabs: {
-              sendMessage: O.bind(null, "sendMessage", {
+              sendMessage: _.bind(null, "sendMessage", {
                 minArgs: 2,
                 maxArgs: 3
               })
             }
-          }, U = {
+          }, M = {
             clear: {
               minArgs: 1,
               maxArgs: 1
@@ -864,25 +864,25 @@ function Q() {
               maxArgs: 1
             }
           };
-          return x.privacy = {
+          return f.privacy = {
             network: {
-              "*": U
+              "*": M
             },
             services: {
-              "*": U
+              "*": M
             },
             websites: {
-              "*": U
+              "*": M
             }
-          }, L(c, H, x);
+          }, R(m, Y, f);
         };
-        t.exports = u(chrome);
+        r.exports = g(chrome);
       }
     });
-  })(M)), M.exports;
+  })(N)), N.exports;
 }
-Q();
-const K = {
+J();
+const Q = {
   score: 50,
   status: "passive",
   streak: 0,
@@ -892,48 +892,48 @@ const K = {
   totalActiveSecs: 0,
   metricsHistory: []
 };
-let g = { ...K };
-const $ = {
-  calculateScore: (s) => {
-    const { typingCadence: n, errors: t, mouseSmoothness: l, switchCount: u } = s;
-    console.log("📊 Calculating score from metrics:", { typingCadence: n, errors: t, mouseSmoothness: l, switchCount: u });
-    let c = 50;
-    const x = Math.min(100, n / 60 * 100);
-    c += (x - 50) * 0.4;
-    const p = Math.min(20, t * 3);
-    c -= p, c += (l - 50) * 0.3;
-    const v = Math.min(30, u * 10);
-    c -= v;
-    const y = Math.max(0, Math.min(100, c));
-    return console.log("✅ Final score:", y, "(typing:", x.toFixed(1), "errors:", -p, "mouse:", l, "switches:", -v, ")"), y;
+let c = { ...Q };
+const F = {
+  calculateScore: (e) => {
+    const { typingCadence: s, errors: r, mouseSmoothness: n, switchCount: g } = e;
+    console.log("📊 Calculating score from metrics:", { typingCadence: s, errors: r, mouseSmoothness: n, switchCount: g });
+    let m = 50;
+    const f = Math.min(100, s / 60 * 100);
+    m += (f - 50) * 0.4;
+    const k = Math.min(20, r * 3);
+    m -= k, m += (n - 50) * 0.3;
+    const S = Math.min(30, g * 10);
+    m -= S;
+    const y = Math.max(0, Math.min(100, m));
+    return console.log("✅ Final score:", y, "(typing:", f.toFixed(1), "errors:", -k, "mouse:", n, "switches:", -S, ")"), y;
   },
-  calculateFocusQuality: (s) => {
-    if (s.metricsHistory.length === 0) return 0;
-    const n = s.metricsHistory.map((u) => u.score || 50), t = n.reduce((u, c) => u + c, 0) / n.length, l = Math.min(20, s.streak / 300 * 20);
-    return Math.min(100, t + l);
+  calculateFocusQuality: (e) => {
+    if (e.metricsHistory.length === 0) return 0;
+    const s = e.metricsHistory.map((g) => g.score || 50), r = s.reduce((g, m) => g + m, 0) / s.length, n = Math.min(20, e.streak / 300 * 20);
+    return Math.min(100, r + n);
   },
-  updateState: async (s) => {
-    const n = $.calculateScore(s);
-    g.score = n, g.metricsHistory.push({ score: n, timestamp: Date.now(), ...s }), g.metricsHistory.length > 10 && g.metricsHistory.shift();
-    const t = g.status;
-    return n > 80 ? g.status = "flow" : n > 60 ? g.status = "active" : n < 30 ? g.status = "distracted" : n < 50 && (g.status = "passive"), t !== g.status && console.log("🔄 Status changed:", t, "→", g.status), g.totalActiveSecs += 10, g.status === "flow" || g.status === "active" ? g.streak += 10 : (g.streak > 0 && console.log("❌ Streak broken at", g.streak, "seconds"), g.streak = 0), g.focusQuality = $.calculateFocusQuality(g), console.log("💾 Saving state:", {
-      score: g.score,
-      status: g.status,
-      streak: g.streak,
-      focusQuality: g.focusQuality.toFixed(1) + "%"
-    }), await chrome.storage.local.set({ flowState: g }), g;
+  updateState: async (e) => {
+    const s = F.calculateScore(e);
+    c.score = s, c.metricsHistory.push({ score: s, timestamp: Date.now(), ...e }), c.metricsHistory.length > 10 && c.metricsHistory.shift();
+    const r = c.status;
+    return s > 80 ? c.status = "flow" : s > 60 ? c.status = "active" : s < 30 ? c.status = "distracted" : s < 50 && (c.status = "passive"), r !== c.status && console.log("🔄 Status changed:", r, "→", c.status), c.totalActiveSecs += 10, c.status === "flow" || c.status === "active" ? c.streak += 10 : (c.streak > 0 && console.log("❌ Streak broken at", c.streak, "seconds"), c.streak = 0), c.focusQuality = F.calculateFocusQuality(c), console.log("💾 Saving state:", {
+      score: c.score,
+      status: c.status,
+      streak: c.streak,
+      focusQuality: c.focusQuality.toFixed(1) + "%"
+    }), await chrome.storage.local.set({ flowState: c }), c;
   },
-  getState: () => g
-}, Y = "", J = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${Y}`, I = {
-  analyzeFlowState: async (s) => {
-    const n = {
+  getState: () => c
+}, Z = "AIzaSyAVPtnPerbCGMplZJH6jNZ-PwKgr3Ud1Fc", H = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${Z}`, U = {
+  analyzeFlowState: async (e) => {
+    const s = {
       contents: [{
         parts: [{
           text: `
             Analyze the following user behavior metrics and classify their flow state.
             
             Metrics:
-            ${JSON.stringify(s, null, 2)}
+            ${JSON.stringify(e, null, 2)}
             
             Return a JSON object with the following structure:
             {
@@ -946,25 +946,76 @@ const $ = {
       }]
     };
     try {
-      const c = (await (await fetch(J, {
+      const n = await (await fetch(H, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(n)
-      })).json()).candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
-      return JSON.parse(c);
-    } catch (t) {
-      return console.error("AI Agent Error:", t), {
+        body: JSON.stringify(s)
+      })).json();
+      if (console.log("🤖 Raw AI Response:", n), !n.candidates || !n.candidates[0] || !n.candidates[0].content)
+        throw console.error("❌ Invalid AI response structure:", n), new Error("Invalid response structure");
+      const g = n.candidates[0].content.parts[0].text;
+      console.log("📝 AI Response Text:", g);
+      const m = g.replace(/```json/g, "").replace(/```/g, "").trim();
+      return JSON.parse(m);
+    } catch (r) {
+      return console.error("❌ AI Agent Error:", r), console.log("🔄 Using fallback classification"), {
         classification: "passive work",
         action: "continue flow",
         reasoning: "Fallback due to error"
       };
     }
   },
-  checkUrlRelevance: async (s, n) => (console.log("⚠️ No API key - using heuristic blocking"), I.heuristicUrlCheck(s)),
-  heuristicUrlCheck: (s) => {
-    const n = new URL(s).hostname.toLowerCase(), l = [
+  checkUrlRelevance: async (e, s) => {
+    const r = {
+      contents: [{
+        parts: [{
+          text: `
+            User's work goal: "${s}"
+            Website URL: ${e}
+            
+            Determine if this website is relevant to achieving the user's goal.
+            
+            Consider:
+            - Is it a distraction (social media, news, entertainment)?
+            - Does it help with the stated goal?
+            - Is it a productivity tool or resource?
+            
+            Respond with only "RELEVANT" or "DISTRACTION" and a brief reason.
+            
+            Format: RELEVANT|reason or DISTRACTION|reason
+          `
+        }]
+      }]
+    };
+    try {
+      console.log("🔍 Checking URL with AI:", e), console.log("🎯 Goal:", s);
+      const n = await fetch(H, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(r)
+      });
+      if (!n.ok)
+        throw console.error("❌ AI API Error:", n.status, n.statusText), new Error(`API returned ${n.status}`);
+      const g = await n.json();
+      if (console.log("🤖 Raw URL Check Response:", g), !g.candidates || !g.candidates[0] || !g.candidates[0].content)
+        throw console.error("❌ Invalid AI response structure:", g), new Error("Invalid response structure");
+      const m = g.candidates[0].content.parts[0].text.trim();
+      console.log("📝 AI URL Decision:", m);
+      const f = m.toUpperCase().startsWith("RELEVANT");
+      return console.log(f ? "✅ URL is RELEVANT" : "🚫 URL is DISTRACTION"), f;
+    } catch (n) {
+      return console.error("❌ URL Check Error:", n), console.log("🔄 Falling back to heuristic check"), U.heuristicUrlCheck(e);
+    }
+  },
+  heuristicUrlCheck: (e) => {
+    console.log("🧠 Heuristic check for:", e);
+    const s = new URL(e).hostname.toLowerCase();
+    console.log("🌐 Hostname:", s);
+    const n = [
       "facebook.com",
       "twitter.com",
       "x.com",
@@ -982,7 +1033,7 @@ const $ = {
       "gaming",
       "entertainment"
     ].some(
-      (x) => n.includes(x)
+      (f) => s.includes(f)
     );
     return [
       "github.com",
@@ -998,108 +1049,153 @@ const $ = {
       "asana.com",
       "slack.com"
     ].some(
-      (x) => n.includes(x)
-    ) ? !0 : !l;
+      (f) => s.includes(f)
+    ) ? (console.log("✅ Heuristic: PRODUCTIVITY site - ALLOW"), !0) : n ? (console.log("🚫 Heuristic: DISTRACTION site - BLOCK"), !1) : (console.log("❓ Heuristic: Unknown site - ALLOW by default"), !0);
   }
 };
 console.log("Flow State Background Service Started");
-let f = null, k = [], j = 0, T = 0;
-chrome.storage.local.get(["currentGoal", "blockedSites"], (s) => {
-  s.currentGoal && (f = s.currentGoal, console.log("🎯 Loaded goal from storage:", f)), s.blockedSites && (k = s.blockedSites, console.log("🚫 Loaded", k.length, "blocked sites"));
+let u = null, x = [], j = 0, v = 0;
+chrome.storage.local.get(["currentGoal", "blockedSites"], async (e) => {
+  if (e.currentGoal ? (u = e.currentGoal, console.log("🎯 Loaded goal from storage:", u), console.log("✅ URL BLOCKING IS NOW ACTIVE")) : console.log("⚠️ NO GOAL SET - URL blocking is disabled. Open new tab to set a goal."), e.blockedSites && (x = e.blockedSites, console.log("🚫 Loaded", x.length, "blocked sites:", x)), console.log("═══════════════════════════════════════"), console.log("🔧 FLOW STATE AI - DEBUG MODE"), console.log("═══════════════════════════════════════"), console.log("Goal:", u || "NOT SET"), console.log("Blocked sites:", x.length), console.log("Listeners registered:", {
+    "webNavigation.onCommitted": "YES",
+    "tabs.onUpdated": "YES",
+    "runtime.onMessage": "YES"
+  }), console.log("═══════════════════════════════════════"), u) {
+    console.log("🔍 Scanning all open tabs for blocked sites...");
+    const s = await chrome.tabs.query({});
+    console.log(`📋 Found ${s.length} open tabs`);
+    for (const r of s)
+      if (r.url && r.id) {
+        console.log(`
+🔎 Checking tab ${r.id}: ${r.url}`);
+        const n = await O(r.url);
+        n.block ? (console.log(`🚫 BLOCKING EXISTING TAB: ${n.hostname}`), G(r.id, n.hostname)) : console.log(`✅ Tab allowed: ${n.hostname}`);
+      }
+    console.log(`✅ Tab scan complete
+`);
+  }
 });
-const S = (s, n, t = "info") => {
-  const l = Date.now();
-  if (l - j < 6e4) return;
+const C = (e, s, r = "info") => {
+  const n = Date.now();
+  if (n - j < 6e4) return;
   chrome.notifications.create({
     type: "basic",
     iconUrl: "icon-128.png",
-    title: s,
-    message: n,
+    title: e,
+    message: s,
     priority: 2
-  }), j = l, console.log("🔔 Notification:", s, "-", n);
+  }), j = n, console.log("🔔 Notification:", e, "-", s);
 };
-chrome.runtime.onMessage.addListener((s, n, t) => s.type === "FLOW_METRICS" ? (Z(s.payload), !1) : s.type === "SET_GOAL" ? (V(s.payload.goal), !1) : s.type === "CLEAR_GOAL" ? (X(), !1) : s.type === "CHECK_URL" ? (ee(s.payload.url, n, t), !0) : !1);
-const Z = async (s) => {
-  const n = await $.updateState(s);
-  console.log("Updated Flow State:", n);
-  const t = n.status, l = n.score, u = Math.floor(n.streak / 60);
-  t === "distracted" || l < 30 ? (T++, T >= 3 && (S(
+chrome.runtime.onMessage.addListener((e, s, r) => (console.log("📨 Message received:", e.type), e.type === "FLOW_METRICS" ? (X(e.payload), !1) : e.type === "SET_GOAL" ? (ee(e.payload.goal), !1) : e.type === "CLEAR_GOAL" ? (se(), !1) : e.type === "CHECK_URL" ? (oe(e.payload.url, s, r), !0) : e.type === "CHECK_URL_STATUS" ? ((async () => {
+  const n = await O(e.payload.url);
+  r({ shouldBlock: n.block, hostname: n.hostname });
+})(), !0) : !1));
+const X = async (e) => {
+  const s = await F.updateState(e);
+  console.log("Updated Flow State:", s);
+  const r = s.status, n = s.score, g = Math.floor(s.streak / 60);
+  r === "distracted" || n < 30 ? (v++, v >= 3 && (C(
     "⚠️ Focus Alert",
-    `You've been distracted for ${T} intervals. Take a deep breath and refocus on your goal!`,
+    `You've been distracted for ${v} intervals. Take a deep breath and refocus on your goal!`,
     "warning"
-  ), T = 0)) : t === "flow" || l >= 80 ? (T = 0, u > 0 && u % 15 === 0 && S(
+  ), v = 0)) : r === "flow" || n >= 80 ? (v = 0, g > 0 && g % 15 === 0 && C(
     "🎉 Amazing Focus!",
-    `You've been in flow state for ${u} minutes! Keep up the excellent work!`,
+    `You've been in flow state for ${g} minutes! Keep up the excellent work!`,
     "success"
-  )) : t === "active" && (T = 0), n.totalActiveSecs > 3600 && n.totalActiveSecs % 3600 < 10 && S(
+  )) : r === "active" && (v = 0), s.totalActiveSecs > 3600 && s.totalActiveSecs % 3600 < 10 && C(
     "⏰ Time for a Break",
     "You've been working for an hour. Consider taking a 5-minute break to recharge!",
     "info"
   );
-  const c = Date.now(), x = n.lastIntervention || 0;
-  if (c - x > 6e4) {
+  const m = Date.now(), f = s.lastIntervention || 0;
+  if (m - f > 6e4) {
     console.log("Requesting AI Analysis...");
-    const p = await I.analyzeFlowState(s);
-    console.log("AI Response:", p), n.lastIntervention = c, chrome.tabs.query({ active: !0, currentWindow: !0 }, (v) => {
+    const k = await U.analyzeFlowState(e);
+    console.log("AI Response:", k), s.lastIntervention = m, chrome.tabs.query({ active: !0, currentWindow: !0 }, (S) => {
       var y;
-      (y = v[0]) != null && y.id && chrome.tabs.sendMessage(v[0].id, {
+      (y = S[0]) != null && y.id && chrome.tabs.sendMessage(S[0].id, {
         type: "AI_INTERVENTION",
-        payload: p
+        payload: k
       });
     });
   }
-}, V = async (s) => {
-  f = s, k = [], await chrome.storage.local.set({
-    currentGoal: s,
+}, ee = async (e) => {
+  console.log("═══════════════════════════════════════"), console.log("🎯 SET_GOAL MESSAGE RECEIVED"), console.log("New Goal:", e), u = e, x = [], await chrome.storage.local.set({
+    currentGoal: e,
     blockedSites: [],
     goalSetAt: Date.now()
-  }), console.log("🎯 Goal set:", s), console.log("✅ AI-based URL filtering activated"), S(
+  }), console.log("✅ Goal saved to storage"), console.log("🔓 URL BLOCKING IS NOW ACTIVE"), console.log("All future navigations will be checked"), console.log("═══════════════════════════════════════"), C(
     "🎯 Goal Set!",
-    `Your goal: "${s.substring(0, 50)}${s.length > 50 ? "..." : ""}". AI is now protecting your focus!`,
+    `Your goal: "${e.substring(0, 50)}${e.length > 50 ? "..." : ""}". AI is now protecting your focus!`,
     "success"
   );
-}, X = async () => {
-  f = null, k = [], await chrome.storage.local.remove(["currentGoal", "blockedSites", "goalSetAt"]), console.log("❌ Goal cleared, URL filtering deactivated"), S(
+}, se = async () => {
+  u = null, x = [], await chrome.storage.local.remove(["currentGoal", "blockedSites", "goalSetAt"]), console.log("❌ Goal cleared, URL filtering deactivated"), C(
     "Goal Cleared",
     "Website blocking has been disabled. Set a new goal to re-enable focus protection.",
     "info"
   );
-}, ee = async (s, n, t) => {
-  if (!f) {
-    t({ shouldBlock: !1 });
+}, oe = async (e, s, r) => {
+  if (!u) {
+    r({ shouldBlock: !1 });
     return;
   }
-  const l = new URL(s).hostname;
-  if (k.includes(l)) {
-    t({ shouldBlock: !0, reason: "Previously identified as distraction" });
+  const n = new URL(e).hostname;
+  if (x.includes(n)) {
+    r({ shouldBlock: !0, reason: "Previously identified as distraction" });
     return;
   }
-  console.log("🤖 Checking URL relevance:", l, "for goal:", f), await I.checkUrlRelevance(s, f) ? (console.log("✅ Allowed:", l), t({ shouldBlock: !1 })) : (k.push(l), await chrome.storage.local.set({ blockedSites: k }), console.log("🚫 Blocked:", l), t({ shouldBlock: !0, reason: `Not relevant to your goal: "${f}"` }));
+  console.log("🤖 Checking URL relevance:", n, "for goal:", u), await U.checkUrlRelevance(e, u) ? (console.log("✅ Allowed:", n), r({ shouldBlock: !1 })) : (x.push(n), await chrome.storage.local.set({ blockedSites: x }), console.log("🚫 Blocked:", n), r({ shouldBlock: !0, reason: `Not relevant to your goal: "${u}"` }));
+}, O = async (e) => {
+  if (console.log("───────────────────────────────────────"), console.log("🔍 shouldBlockUrl() called"), console.log("URL:", e), console.log("Current Goal:", u || "NOT SET"), !u)
+    return console.log("⚠️ NO GOAL - Skipping check"), console.log("───────────────────────────────────────"), { block: !1, hostname: "" };
+  if (e.startsWith("chrome://") || e.startsWith("chrome-extension://"))
+    return console.log("⚪ Chrome internal URL - Skipping"), console.log("───────────────────────────────────────"), { block: !1, hostname: "" };
+  try {
+    const s = new URL(e).hostname;
+    if (console.log("🌐 Hostname extracted:", s), x.includes(s))
+      return console.log("🚫 ALREADY IN BLOCKED LIST"), console.log("───────────────────────────────────────"), { block: !0, hostname: s };
+    console.log("🤖 Checking with AI/heuristic...");
+    const r = await U.checkUrlRelevance(e, u);
+    return console.log("AI Result:", r ? "RELEVANT ✅" : "DISTRACTION 🚫"), r ? (console.log("✅ ALLOWING THIS SITE"), console.log("───────────────────────────────────────"), { block: !1, hostname: s }) : (x.push(s), await chrome.storage.local.set({ blockedSites: x }), console.log("🚫 BLOCKING THIS SITE"), console.log("Updated blocked list:", x), console.log("───────────────────────────────────────"), { block: !0, hostname: s });
+  } catch (s) {
+    return console.error("❌ Error checking URL:", s), console.log("───────────────────────────────────────"), { block: !1, hostname: "" };
+  }
+}, G = (e, s) => {
+  if (console.log("🔴 blockUrl() - Redirecting tab", e), console.log("Blocked hostname:", s), !u) {
+    console.log("⚠️ No goal set, cannot block");
+    return;
+  }
+  const r = chrome.runtime.getURL("blocked.html") + "?site=" + encodeURIComponent(s) + "&goal=" + encodeURIComponent(u);
+  console.log("Redirect URL:", r), chrome.tabs.update(e, { url: r }, () => {
+    chrome.runtime.lastError ? console.error("❌ Failed to redirect tab:", chrome.runtime.lastError) : console.log("✅ Tab redirected successfully");
+  }), C(
+    "🚫 Distraction Blocked",
+    `${s} was blocked. Keep working on: "${u.substring(0, 40)}..."`,
+    "warning"
+  );
 };
-chrome.webNavigation.onBeforeNavigate.addListener(async (s) => {
-  if (s.frameId !== 0 || !f) return;
-  const n = s.url;
-  if (!(n.startsWith("chrome://") || n.startsWith("chrome-extension://")))
-    try {
-      const t = new URL(n).hostname;
-      if (k.includes(t)) {
-        chrome.tabs.update(s.tabId, {
-          url: chrome.runtime.getURL("blocked.html") + "?site=" + encodeURIComponent(t) + "&goal=" + encodeURIComponent(f)
-        }), S(
-          "🚫 Site Blocked",
-          `${t} is not relevant to your goal. Stay focused!`,
-          "warning"
-        );
-        return;
-      }
-      console.log("🔍 Checking URL with AI/heuristic:", t), await I.checkUrlRelevance(n, f) ? console.log("✅ URL allowed:", t) : (k.push(t), await chrome.storage.local.set({ blockedSites: k }), console.log("🚫 Navigation blocked:", t), S(
-        "🚫 Distraction Blocked",
-        `${t} was blocked. Keep working on: "${f.substring(0, 40)}..."`,
-        "warning"
-      ), chrome.tabs.update(s.tabId, {
-        url: chrome.runtime.getURL("blocked.html") + "?site=" + encodeURIComponent(t) + "&goal=" + encodeURIComponent(f)
-      }));
-    } catch (t) {
-      console.error("Error checking URL:", t);
-    }
+chrome.webNavigation.onCommitted.addListener(async (e) => {
+  if (console.log("🌍 webNavigation.onCommitted fired"), console.log("Tab ID:", e.tabId), console.log("URL:", e.url), console.log("Frame ID:", e.frameId), console.log("Transition Type:", e.transitionType), e.frameId !== 0) {
+    console.log("⚪ Skipping - Not main frame");
+    return;
+  }
+  if (!u) {
+    console.log("⚠️ Skipping - No goal set");
+    return;
+  }
+  console.log("✓ Processing navigation...");
+  const s = await O(e.url);
+  s.block ? (console.log("🛑 WILL BLOCK THIS NAVIGATION"), G(e.tabId, s.hostname)) : console.log("✓ Navigation allowed");
+});
+chrome.tabs.onUpdated.addListener(async (e, s) => {
+  if (console.log("📑 tabs.onUpdated fired"), console.log("Tab ID:", e), console.log("Change Info:", s), !u) {
+    console.log("⚠️ Skipping - No goal set");
+    return;
+  }
+  if (s.status === "loading" && s.url) {
+    console.log("✓ Tab is loading, checking URL..."), console.log("Tab URL:", s.url);
+    const r = await O(s.url);
+    r.block ? (console.log("🛑 WILL BLOCK THIS TAB UPDATE"), G(e, r.hostname)) : console.log("✓ Tab update allowed");
+  }
 });

@@ -20,7 +20,9 @@
     "notifications",
     "sidePanel",
     "activeTab",
-    "webNavigation"
+    "webNavigation",
+    "webRequest",
+    "declarativeNetRequest"
   ],
   "options_page": "options/index.html",
   "background": {

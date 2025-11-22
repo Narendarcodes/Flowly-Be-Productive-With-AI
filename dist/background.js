@@ -1,16 +1,16 @@
-var S = { exports: {} }, q = S.exports, F;
-function W() {
-  return F || (F = 1, (function(m, o) {
-    (function(l, f) {
-      f(m);
-    })(typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : q, function(l) {
+var P = { exports: {} }, D = P.exports, O;
+function G() {
+  return O || (O = 1, (function(r, a) {
+    (function(n, l) {
+      l(r);
+    })(typeof globalThis < "u" ? globalThis : typeof self < "u" ? self : D, function(n) {
       if (!(globalThis.chrome && globalThis.chrome.runtime && globalThis.chrome.runtime.id))
         throw new Error("This script should only be loaded in a browser extension.");
       if (globalThis.browser && globalThis.browser.runtime && globalThis.browser.runtime.id)
-        l.exports = globalThis.browser;
+        n.exports = globalThis.browser;
       else {
-        const f = "The message port closed before a response was received.", b = (a) => {
-          const h = {
+        const l = "The message port closed before a response was received.", u = (m) => {
+          const x = {
             alarms: {
               clear: {
                 minArgs: 0,
@@ -682,175 +682,175 @@ function W() {
               }
             }
           };
-          if (Object.keys(h).length === 0)
+          if (Object.keys(x).length === 0)
             throw new Error("api-metadata.json has not been included in browser-polyfill");
-          class P extends WeakMap {
-            constructor(s, n = void 0) {
-              super(n), this.createItem = s;
+          class k extends WeakMap {
+            constructor(s, o = void 0) {
+              super(o), this.createItem = s;
             }
             get(s) {
               return this.has(s) || this.set(s, this.createItem(s)), super.get(s);
             }
           }
-          const O = (e) => e && typeof e == "object" && typeof e.then == "function", M = (e, s) => (...n) => {
-            a.runtime.lastError ? e.reject(new Error(a.runtime.lastError.message)) : s.singleCallbackArg || n.length <= 1 && s.singleCallbackArg !== !1 ? e.resolve(n[0]) : e.resolve(n);
-          }, y = (e) => e == 1 ? "argument" : "arguments", $ = (e, s) => function(t, ...i) {
-            if (i.length < s.minArgs)
-              throw new Error(`Expected at least ${s.minArgs} ${y(s.minArgs)} for ${e}(), got ${i.length}`);
-            if (i.length > s.maxArgs)
-              throw new Error(`Expected at most ${s.maxArgs} ${y(s.maxArgs)} for ${e}(), got ${i.length}`);
-            return new Promise((A, c) => {
+          const C = (e) => e && typeof e == "object" && typeof e.then == "function", v = (e, s) => (...o) => {
+            m.runtime.lastError ? e.reject(new Error(m.runtime.lastError.message)) : s.singleCallbackArg || o.length <= 1 && s.singleCallbackArg !== !1 ? e.resolve(o[0]) : e.resolve(o);
+          }, T = (e) => e == 1 ? "argument" : "arguments", $ = (e, s) => function(i, ...A) {
+            if (A.length < s.minArgs)
+              throw new Error(`Expected at least ${s.minArgs} ${T(s.minArgs)} for ${e}(), got ${A.length}`);
+            if (A.length > s.maxArgs)
+              throw new Error(`Expected at most ${s.maxArgs} ${T(s.maxArgs)} for ${e}(), got ${A.length}`);
+            return new Promise((d, f) => {
               if (s.fallbackToNoCallback)
                 try {
-                  t[e](...i, M({
-                    resolve: A,
-                    reject: c
+                  i[e](...A, v({
+                    resolve: d,
+                    reject: f
                   }, s));
-                } catch (r) {
-                  console.warn(`${e} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, r), t[e](...i), s.fallbackToNoCallback = !1, s.noCallback = !0, A();
+                } catch (t) {
+                  console.warn(`${e} API method doesn't seem to support the callback parameter, falling back to call it without a callback: `, t), i[e](...A), s.fallbackToNoCallback = !1, s.noCallback = !0, d();
                 }
-              else s.noCallback ? (t[e](...i), A()) : t[e](...i, M({
-                resolve: A,
-                reject: c
+              else s.noCallback ? (i[e](...A), d()) : i[e](...A, v({
+                resolve: d,
+                reject: f
               }, s));
             });
-          }, N = (e, s, n) => new Proxy(s, {
-            apply(t, i, A) {
-              return n.call(i, e, ...A);
+          }, F = (e, s, o) => new Proxy(s, {
+            apply(i, A, d) {
+              return o.call(A, e, ...d);
             }
           });
-          let k = Function.call.bind(Object.prototype.hasOwnProperty);
-          const v = (e, s = {}, n = {}) => {
-            let t = /* @__PURE__ */ Object.create(null), i = {
-              has(c, r) {
-                return r in e || r in t;
+          let R = Function.call.bind(Object.prototype.hasOwnProperty);
+          const E = (e, s = {}, o = {}) => {
+            let i = /* @__PURE__ */ Object.create(null), A = {
+              has(f, t) {
+                return t in e || t in i;
               },
-              get(c, r, x) {
-                if (r in t)
-                  return t[r];
-                if (!(r in e))
+              get(f, t, h) {
+                if (t in i)
+                  return i[t];
+                if (!(t in e))
                   return;
-                let g = e[r];
-                if (typeof g == "function")
-                  if (typeof s[r] == "function")
-                    g = N(e, e[r], s[r]);
-                  else if (k(n, r)) {
-                    let w = $(r, n[r]);
-                    g = N(e, e[r], w);
+                let c = e[t];
+                if (typeof c == "function")
+                  if (typeof s[t] == "function")
+                    c = F(e, e[t], s[t]);
+                  else if (R(o, t)) {
+                    let p = $(t, o[t]);
+                    c = F(e, e[t], p);
                   } else
-                    g = g.bind(e);
-                else if (typeof g == "object" && g !== null && (k(s, r) || k(n, r)))
-                  g = v(g, s[r], n[r]);
-                else if (k(n, "*"))
-                  g = v(g, s[r], n["*"]);
+                    c = c.bind(e);
+                else if (typeof c == "object" && c !== null && (R(s, t) || R(o, t)))
+                  c = E(c, s[t], o[t]);
+                else if (R(o, "*"))
+                  c = E(c, s[t], o["*"]);
                 else
-                  return Object.defineProperty(t, r, {
+                  return Object.defineProperty(i, t, {
                     configurable: !0,
                     enumerable: !0,
                     get() {
-                      return e[r];
+                      return e[t];
                     },
-                    set(w) {
-                      e[r] = w;
+                    set(p) {
+                      e[t] = p;
                     }
-                  }), g;
-                return t[r] = g, g;
+                  }), c;
+                return i[t] = c, c;
               },
-              set(c, r, x, g) {
-                return r in t ? t[r] = x : e[r] = x, !0;
+              set(f, t, h, c) {
+                return t in i ? i[t] = h : e[t] = h, !0;
               },
-              defineProperty(c, r, x) {
-                return Reflect.defineProperty(t, r, x);
+              defineProperty(f, t, h) {
+                return Reflect.defineProperty(i, t, h);
               },
-              deleteProperty(c, r) {
-                return Reflect.deleteProperty(t, r);
+              deleteProperty(f, t) {
+                return Reflect.deleteProperty(i, t);
               }
-            }, A = Object.create(e);
-            return new Proxy(A, i);
-          }, T = (e) => ({
-            addListener(s, n, ...t) {
-              s.addListener(e.get(n), ...t);
+            }, d = Object.create(e);
+            return new Proxy(d, A);
+          }, I = (e) => ({
+            addListener(s, o, ...i) {
+              s.addListener(e.get(o), ...i);
             },
-            hasListener(s, n) {
-              return s.hasListener(e.get(n));
+            hasListener(s, o) {
+              return s.hasListener(e.get(o));
             },
-            removeListener(s, n) {
-              s.removeListener(e.get(n));
+            removeListener(s, o) {
+              s.removeListener(e.get(o));
             }
-          }), L = new P((e) => typeof e != "function" ? e : function(n) {
-            const t = v(n, {}, {
+          }), j = new k((e) => typeof e != "function" ? e : function(o) {
+            const i = E(o, {}, {
               getContent: {
                 minArgs: 0,
                 maxArgs: 0
               }
             });
-            e(t);
-          }), I = new P((e) => typeof e != "function" ? e : function(n, t, i) {
-            let A = !1, c, r = new Promise((p) => {
-              c = function(d) {
-                A = !0, p(d);
+            e(i);
+          }), B = new k((e) => typeof e != "function" ? e : function(o, i, A) {
+            let d = !1, f, t = new Promise((S) => {
+              f = function(b) {
+                d = !0, S(b);
               };
-            }), x;
+            }), h;
             try {
-              x = e(n, t, c);
-            } catch (p) {
-              x = Promise.reject(p);
+              h = e(o, i, f);
+            } catch (S) {
+              h = Promise.reject(S);
             }
-            const g = x !== !0 && O(x);
-            if (x !== !0 && !g && !A)
+            const c = h !== !0 && C(h);
+            if (h !== !0 && !c && !d)
               return !1;
-            const w = (p) => {
-              p.then((d) => {
-                i(d);
-              }, (d) => {
-                let E;
-                d && (d instanceof Error || typeof d.message == "string") ? E = d.message : E = "An unexpected error occurred", i({
+            const p = (S) => {
+              S.then((b) => {
+                A(b);
+              }, (b) => {
+                let N;
+                b && (b instanceof Error || typeof b.message == "string") ? N = b.message : N = "An unexpected error occurred", A({
                   __mozWebExtensionPolyfillReject__: !0,
-                  message: E
+                  message: N
                 });
-              }).catch((d) => {
-                console.error("Failed to send onMessage rejected reply", d);
+              }).catch((b) => {
+                console.error("Failed to send onMessage rejected reply", b);
               });
             };
-            return w(g ? x : r), !0;
-          }), j = ({
+            return p(c ? h : t), !0;
+          }), W = ({
             reject: e,
             resolve: s
-          }, n) => {
-            a.runtime.lastError ? a.runtime.lastError.message === f ? s() : e(new Error(a.runtime.lastError.message)) : n && n.__mozWebExtensionPolyfillReject__ ? e(new Error(n.message)) : s(n);
-          }, R = (e, s, n, ...t) => {
-            if (t.length < s.minArgs)
-              throw new Error(`Expected at least ${s.minArgs} ${y(s.minArgs)} for ${e}(), got ${t.length}`);
-            if (t.length > s.maxArgs)
-              throw new Error(`Expected at most ${s.maxArgs} ${y(s.maxArgs)} for ${e}(), got ${t.length}`);
-            return new Promise((i, A) => {
-              const c = j.bind(null, {
-                resolve: i,
-                reject: A
+          }, o) => {
+            m.runtime.lastError ? m.runtime.lastError.message === l ? s() : e(new Error(m.runtime.lastError.message)) : o && o.__mozWebExtensionPolyfillReject__ ? e(new Error(o.message)) : s(o);
+          }, _ = (e, s, o, ...i) => {
+            if (i.length < s.minArgs)
+              throw new Error(`Expected at least ${s.minArgs} ${T(s.minArgs)} for ${e}(), got ${i.length}`);
+            if (i.length > s.maxArgs)
+              throw new Error(`Expected at most ${s.maxArgs} ${T(s.maxArgs)} for ${e}(), got ${i.length}`);
+            return new Promise((A, d) => {
+              const f = W.bind(null, {
+                resolve: A,
+                reject: d
               });
-              t.push(c), n.sendMessage(...t);
+              i.push(f), o.sendMessage(...i);
             });
-          }, B = {
+          }, q = {
             devtools: {
               network: {
-                onRequestFinished: T(L)
+                onRequestFinished: I(j)
               }
             },
             runtime: {
-              onMessage: T(I),
-              onMessageExternal: T(I),
-              sendMessage: R.bind(null, "sendMessage", {
+              onMessage: I(B),
+              onMessageExternal: I(B),
+              sendMessage: _.bind(null, "sendMessage", {
                 minArgs: 1,
                 maxArgs: 3
               })
             },
             tabs: {
-              sendMessage: R.bind(null, "sendMessage", {
+              sendMessage: _.bind(null, "sendMessage", {
                 minArgs: 2,
                 maxArgs: 3
               })
             }
-          }, C = {
+          }, L = {
             clear: {
               minArgs: 1,
               maxArgs: 1
@@ -864,53 +864,76 @@ function W() {
               maxArgs: 1
             }
           };
-          return h.privacy = {
+          return x.privacy = {
             network: {
-              "*": C
+              "*": L
             },
             services: {
-              "*": C
+              "*": L
             },
             websites: {
-              "*": C
+              "*": L
             }
-          }, v(a, B, h);
+          }, E(m, q, x);
         };
-        l.exports = b(chrome);
+        n.exports = u(chrome);
       }
     });
-  })(S)), S.exports;
+  })(P)), P.exports;
 }
-W();
-const U = {
+G();
+const H = {
   score: 50,
   status: "passive",
   streak: 0,
   sessionStart: Date.now(),
-  lastIntervention: 0
+  lastIntervention: 0,
+  focusQuality: 0,
+  totalActiveSecs: 0,
+  metricsHistory: []
 };
-let u = { ...U };
-const _ = {
-  calculateScore: (m) => {
-    const { typingCadence: o, errors: l, mouseSmoothness: f, switchCount: b } = m;
-    let a = 50;
-    return a += o * 0.5, a -= l * 2, a += f * 0.2, a -= b * 5, Math.max(0, Math.min(100, a));
+let g = { ...H };
+const U = {
+  calculateScore: (r) => {
+    const { typingCadence: a, errors: n, mouseSmoothness: l, switchCount: u } = r;
+    console.log("📊 Calculating score from metrics:", { typingCadence: a, errors: n, mouseSmoothness: l, switchCount: u });
+    let m = 50;
+    const x = Math.min(100, a / 60 * 100);
+    m += (x - 50) * 0.4;
+    const k = Math.min(20, n * 3);
+    m -= k, m += (l - 50) * 0.3;
+    const C = Math.min(30, u * 10);
+    m -= C;
+    const v = Math.max(0, Math.min(100, m));
+    return console.log("✅ Final score:", v, "(typing:", x.toFixed(1), "errors:", -k, "mouse:", l, "switches:", -C, ")"), v;
   },
-  updateState: async (m) => {
-    const o = _.calculateScore(m);
-    return u.score = o, o > 80 ? u.status = "flow" : o > 50 ? u.status = "active" : o < 30 ? u.status = "distracted" : u.status = "passive", u.status === "flow" ? u.streak += 10 : u.streak = 0, await chrome.storage.local.set({ flowState: u }), u;
+  calculateFocusQuality: (r) => {
+    if (r.metricsHistory.length === 0) return 0;
+    const a = r.metricsHistory.map((u) => u.score || 50), n = a.reduce((u, m) => u + m, 0) / a.length, l = Math.min(20, r.streak / 300 * 20);
+    return Math.min(100, n + l);
   },
-  getState: () => u
-}, D = "YOUR_GEMINI_API_KEY", z = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${D}`, G = {
-  analyzeFlowState: async (m) => {
-    const o = {
+  updateState: async (r) => {
+    const a = U.calculateScore(r);
+    g.score = a, g.metricsHistory.push({ score: a, timestamp: Date.now(), ...r }), g.metricsHistory.length > 10 && g.metricsHistory.shift();
+    const n = g.status;
+    return a > 80 ? g.status = "flow" : a > 60 ? g.status = "active" : a < 30 ? g.status = "distracted" : a < 50 && (g.status = "passive"), n !== g.status && console.log("🔄 Status changed:", n, "→", g.status), g.totalActiveSecs += 10, g.status === "flow" || g.status === "active" ? g.streak += 10 : (g.streak > 0 && console.log("❌ Streak broken at", g.streak, "seconds"), g.streak = 0), g.focusQuality = U.calculateFocusQuality(g), console.log("💾 Saving state:", {
+      score: g.score,
+      status: g.status,
+      streak: g.streak,
+      focusQuality: g.focusQuality.toFixed(1) + "%"
+    }), await chrome.storage.local.set({ flowState: g }), g;
+  },
+  getState: () => g
+}, z = "", Q = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${z}`, M = {
+  analyzeFlowState: async (r) => {
+    const a = {
       contents: [{
         parts: [{
           text: `
             Analyze the following user behavior metrics and classify their flow state.
             
             Metrics:
-            ${JSON.stringify(m, null, 2)}
+            ${JSON.stringify(r, null, 2)}
             
             Return a JSON object with the following structure:
             {
@@ -923,40 +946,112 @@ const _ = {
       }]
     };
     try {
-      const a = (await (await fetch(z, {
+      const m = (await (await fetch(Q, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(o)
+        body: JSON.stringify(a)
       })).json()).candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
-      return JSON.parse(a);
-    } catch (l) {
-      return console.error("AI Agent Error:", l), {
+      return JSON.parse(m);
+    } catch (n) {
+      return console.error("AI Agent Error:", n), {
         classification: "passive work",
         action: "continue flow",
         reasoning: "Fallback due to error"
       };
     }
+  },
+  checkUrlRelevance: async (r, a) => (console.log("⚠️ No API key - using heuristic blocking"), M.heuristicUrlCheck(r)),
+  heuristicUrlCheck: (r) => {
+    const a = new URL(r).hostname.toLowerCase(), l = [
+      "facebook.com",
+      "twitter.com",
+      "x.com",
+      "instagram.com",
+      "tiktok.com",
+      "youtube.com",
+      "reddit.com",
+      "netflix.com",
+      "twitch.tv",
+      "pinterest.com",
+      "snapchat.com",
+      "linkedin.com/feed",
+      "news",
+      "sports",
+      "gaming",
+      "entertainment"
+    ].some(
+      (x) => a.includes(x)
+    );
+    return [
+      "github.com",
+      "stackoverflow.com",
+      "docs.",
+      "developer.",
+      "learn",
+      "tutorial",
+      "documentation",
+      "api",
+      "notion.so",
+      "trello.com",
+      "asana.com",
+      "slack.com"
+    ].some(
+      (x) => a.includes(x)
+    ) ? !0 : !l;
   }
 };
 console.log("Flow State Background Service Started");
-chrome.runtime.onMessage.addListener((m, o, l) => {
-  m.type === "FLOW_METRICS" && J(m.payload);
-});
-async function J(m) {
-  const o = await _.updateState(m);
-  console.log("Updated Flow State:", o);
-  const l = Date.now(), f = o.lastIntervention || 0;
-  if (l - f > 6e4) {
+let w = null, y = [];
+chrome.runtime.onMessage.addListener((r, a, n) => r.type === "FLOW_METRICS" ? (J(r.payload), !1) : r.type === "SET_GOAL" ? (Z(r.payload.goal), !1) : r.type === "CLEAR_GOAL" ? (K(), !1) : r.type === "CHECK_URL" ? (V(r.payload.url, a, n), !0) : !1);
+const J = async (r) => {
+  const a = await U.updateState(r);
+  console.log("Updated Flow State:", a);
+  const n = Date.now(), l = a.lastIntervention || 0;
+  if (n - l > 6e4) {
     console.log("Requesting AI Analysis...");
-    const b = await G.analyzeFlowState(m);
-    console.log("AI Response:", b), o.lastIntervention = l, chrome.tabs.query({ active: !0, currentWindow: !0 }, (a) => {
-      var h;
-      (h = a[0]) != null && h.id && chrome.tabs.sendMessage(a[0].id, {
+    const u = await M.analyzeFlowState(r);
+    console.log("AI Response:", u), a.lastIntervention = n, chrome.tabs.query({ active: !0, currentWindow: !0 }, (m) => {
+      var x;
+      (x = m[0]) != null && x.id && chrome.tabs.sendMessage(m[0].id, {
         type: "AI_INTERVENTION",
-        payload: b
+        payload: u
       });
     });
   }
-}
+}, Z = async (r) => {
+  w = r, console.log("🎯 Goal set:", r), y = [], console.log("✅ AI-based URL filtering activated");
+}, K = () => {
+  w = null, y = [], console.log("❌ Goal cleared, URL filtering deactivated");
+}, V = async (r, a, n) => {
+  if (!w) {
+    n({ shouldBlock: !1 });
+    return;
+  }
+  const l = new URL(r).hostname;
+  if (y.includes(l)) {
+    n({ shouldBlock: !0, reason: "Previously identified as distraction" });
+    return;
+  }
+  console.log("🤖 Checking URL relevance:", l, "for goal:", w), await M.checkUrlRelevance(r, w) ? (console.log("✅ Allowed:", l), n({ shouldBlock: !1 })) : (y.push(l), console.log("🚫 Blocked:", l), n({ shouldBlock: !0, reason: `Not relevant to your goal: "${w}"` }));
+};
+chrome.webNavigation.onBeforeNavigate.addListener(async (r) => {
+  if (r.frameId !== 0 || !w) return;
+  const a = r.url;
+  if (!(a.startsWith("chrome://") || a.startsWith("chrome-extension://")))
+    try {
+      const n = new URL(a).hostname;
+      if (y.includes(n)) {
+        chrome.tabs.update(r.tabId, {
+          url: chrome.runtime.getURL("blocked.html") + "?site=" + encodeURIComponent(n) + "&goal=" + encodeURIComponent(w)
+        });
+        return;
+      }
+      await M.checkUrlRelevance(a, w) || (y.push(n), console.log("🚫 Navigation blocked:", n), chrome.tabs.update(r.tabId, {
+        url: chrome.runtime.getURL("blocked.html") + "?site=" + encodeURIComponent(n) + "&goal=" + encodeURIComponent(w)
+      }));
+    } catch (n) {
+      console.error("Error checking URL:", n);
+    }
+});

@@ -96,7 +96,7 @@ const SidePanel = () => {
                   isLight ? 'text-slate-600' : 'text-slate-400')} size={20} />
                 <div className={cn('text-2xl font-semibold',
                   isLight ? 'text-slate-900' : 'text-white')}>
-                  85%
+                  {Math.round(flowState.focusQuality || 0)}%
                 </div>
                 <div className={cn('text-xs',
                   isLight ? 'text-slate-600' : 'text-slate-400')}>

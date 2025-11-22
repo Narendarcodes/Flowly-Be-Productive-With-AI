@@ -31,7 +31,7 @@ const manifest = {
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
   host_permissions: ['<all_urls>'],
-  permissions: ['storage', 'scripting', 'tabs', 'notifications', 'sidePanel', 'activeTab'],
+  permissions: ['storage', 'scripting', 'tabs', 'notifications', 'sidePanel', 'activeTab', 'webNavigation'],
   options_page: 'options/index.html',
   background: {
     service_worker: 'background.js',
@@ -72,7 +72,7 @@ const manifest = {
   devtools_page: 'devtools/index.html',
   web_accessible_resources: [
     {
-      resources: ['*.js', '*.css', '*.svg', 'icon-128.png', 'icon-34.png', 'analytics/index.html'],
+      resources: ['*.js', '*.css', '*.svg', 'icon-128.png', 'icon-34.png', 'analytics/index.html', 'blocked.html'],
       matches: ['*://*/*'],
     },
   ],

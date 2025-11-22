@@ -65,16 +65,20 @@ export const MetricsCollector = {
 
         // Send metrics loop
         setInterval(() => {
+            console.log('📤 Sending metrics to background:', {
+                typing: metrics.typingCadence + ' chars/min',
+                errors: metrics.errors,
+                mouse: metrics.mouseSmoothness,
+                switches: metrics.switchCount,
+                lastActive: new Date(metrics.lastActive).toLocaleTimeString()
+            });
+            
             chrome.runtime.sendMessage({
                 type: 'FLOW_METRICS',
                 payload: metrics
             });
 
-            // Reset periodic counters if needed, or keep cumulative?
-            // For flow, we want current state.
-            // Errors and switchCount might need decay or reset.
-            // For now, we send cumulative and let background handle windowing if needed, 
-            // or we reset here. Let's reset errors/switchCount to represent "rate" per 10s.
+            // Reset periodic counters to represent "rate" per 10s interval
             metrics.errors = 0;
             metrics.switchCount = 0;
         }, 10000);

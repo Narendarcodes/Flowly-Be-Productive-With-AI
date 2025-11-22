@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Blocked - Flow State AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 600px;
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        h1 {
+            color: #1e293b;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .site {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        
+        .goal {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8fafc;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            text-align: left;
+        }
+        
+        .goal strong {
+            color: #1e293b;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .message {
+            color: #64748b;
+            margin: 1.5rem 0;
+            line-height: 1.6;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        button {
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        .secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        
+        .secondary:hover {
+            background: #e2e8f0;
+        }
+        
+        .stats {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🚫</div>
+        <h1>Staying Focused</h1>
+        <div class="site" id="blockedSite">Loading...</div>
+        
+        <div class="goal">
+            <strong>Your Current Goal:</strong>
+            <span id="currentGoal">Loading...</span>
+        </div>
+        
+        <p class="message">
+            This site was blocked to help you maintain focus on your goal.
+            AI determined this might be a distraction right now.
+        </p>
+        
+        <div class="buttons">
+            <button class="primary" onclick="goBack()">← Go Back</button>
+            <button class="secondary" onclick="allowOnce()">Allow This Once</button>
+        </div>
+        
+        <div class="stats">
+            💪 Stay strong! You're building better focus habits.
+        </div>
+    </div>
+    
+    <script>
+        // Get URL parameters
+        const params = new URLSearchParams(window.location.search);
+        const site = params.get('site') || 'Unknown site';
+        const goal = params.get('goal') || 'No goal set';
+        
+        document.getElementById('blockedSite').textContent = site;
+        document.getElementById('currentGoal').textContent = goal;
+        
+        function goBack() {
+            window.history.back();
+        }
+        
+        function allowOnce() {
+            // Send message to background to temporarily allow this site
+            chrome.runtime.sendMessage({ 
+                type: 'ALLOW_SITE_ONCE', 
+                payload: { site } 
+            }, () => {
+                // Navigate to the original site
+                window.location.href = 'https://' + site;
+            });
+        }
+    </script>
+</body>
+</html>

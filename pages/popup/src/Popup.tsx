@@ -67,7 +67,7 @@ export default function Popup() {
           <div className="text-[10px] text-slate-500 uppercase">Current Streak</div>
         </div>
         <div className="bg-slate-800/50 p-3 rounded-lg text-center">
-          <div className="text-2xl font-light">85%</div>
+          <div className="text-2xl font-light">{Math.round(flowState.focusQuality || 0)}%</div>
           <div className="text-[10px] text-slate-500 uppercase">Focus Quality</div>
         </div>
       </div>

@@ -6,6 +6,21 @@ console.log('Flow State Background Service Started');
 
 let currentGoal: string | null = null;
 let blockedSites: string[] = [];
+let lastNotificationTime = 0;
+let consecutiveDistractions = 0;
+let consecutiveFlowMinutes = 0;
+
+// Load goal from storage on startup
+chrome.storage.local.get(['currentGoal', 'blockedSites'], (data) => {
+  if (data.currentGoal) {
+    currentGoal = data.currentGoal;
+    console.log('🎯 Loaded goal from storage:', currentGoal);
+  }
+  if (data.blockedSites) {
+    blockedSites = data.blockedSites;
+    console.log('🚫 Loaded', blockedSites.length, 'blocked sites');
+  }
+});
 
 interface Metrics {
   typingCadence: number;
@@ -14,6 +29,27 @@ interface Metrics {
   switchCount: number;
   [key: string]: unknown;
 }
+
+// Show browser notification
+const showNotification = (title: string, message: string, iconType: 'success' | 'warning' | 'info' = 'info'): void => {
+  const now = Date.now();
+  // Throttle notifications to max 1 per minute
+  if (now - lastNotificationTime < 60000) return;
+  
+  const iconUrl = iconType === 'success' ? 'icon-128.png' : 
+                  iconType === 'warning' ? 'icon-128.png' : 'icon-128.png';
+  
+  chrome.notifications.create({
+    type: 'basic',
+    iconUrl,
+    title,
+    message,
+    priority: 2
+  });
+  
+  lastNotificationTime = now;
+  console.log('🔔 Notification:', title, '-', message);
+};
 
 // Listen for metrics from content script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -39,7 +75,55 @@ const handleMetrics = async (metrics: Metrics): Promise<void> => {
   const flowState = await FlowEngine.updateState(metrics);
   console.log('Updated Flow State:', flowState);
 
-  // 2. Check if we need AI intervention
+  // 2. Monitor flow state and send alerts
+  const status = flowState.status;
+  const score = flowState.score;
+  const streak = Math.floor(flowState.streak / 60); // minutes
+  
+  // Track distraction patterns
+  if (status === 'distracted' || score < 30) {
+    consecutiveDistractions++;
+    consecutiveFlowMinutes = 0;
+    
+    if (consecutiveDistractions >= 3) {
+      showNotification(
+        '⚠️ Focus Alert',
+        `You've been distracted for ${consecutiveDistractions} intervals. Take a deep breath and refocus on your goal!`,
+        'warning'
+      );
+      consecutiveDistractions = 0;
+    }
+  } 
+  // Track flow state achievements
+  else if (status === 'flow' || score >= 80) {
+    consecutiveDistractions = 0;
+    consecutiveFlowMinutes++;
+    
+    // Celebrate milestones
+    if (streak > 0 && streak % 15 === 0) { // Every 15 minutes in flow
+      showNotification(
+        '🎉 Amazing Focus!',
+        `You've been in flow state for ${streak} minutes! Keep up the excellent work!`,
+        'success'
+      );
+    }
+  }
+  // Active work state
+  else if (status === 'active') {
+    consecutiveDistractions = 0;
+    consecutiveFlowMinutes++;
+  }
+  
+  // Reminder to take breaks
+  if (flowState.totalActiveSecs > 3600 && flowState.totalActiveSecs % 3600 < 10) { // Every hour
+    showNotification(
+      '⏰ Time for a Break',
+      'You\'ve been working for an hour. Consider taking a 5-minute break to recharge!',
+      'info'
+    );
+  }
+
+  // 3. Check if we need AI intervention
   const now = Date.now();
   const lastIntervention = flowState.lastIntervention || 0;
 
@@ -64,18 +148,38 @@ const handleMetrics = async (metrics: Metrics): Promise<void> => {
 
 const handleSetGoal = async (goal: string): Promise<void> => {
   currentGoal = goal;
-  console.log('🎯 Goal set:', goal);
-  
-  // Use AI to generate list of potentially distracting categories
   blockedSites = []; // Reset blocked sites
   
+  // Save to storage
+  await chrome.storage.local.set({ 
+    currentGoal: goal,
+    blockedSites: [],
+    goalSetAt: Date.now()
+  });
+  
+  console.log('🎯 Goal set:', goal);
   console.log('✅ AI-based URL filtering activated');
+  
+  showNotification(
+    '🎯 Goal Set!',
+    `Your goal: "${goal.substring(0, 50)}${goal.length > 50 ? '...' : ''}". AI is now protecting your focus!`,
+    'success'
+  );
 };
 
-const handleClearGoal = (): void => {
+const handleClearGoal = async (): Promise<void> => {
   currentGoal = null;
   blockedSites = [];
+  
+  await chrome.storage.local.remove(['currentGoal', 'blockedSites', 'goalSetAt']);
+  
   console.log('❌ Goal cleared, URL filtering deactivated');
+  
+  showNotification(
+    'Goal Cleared',
+    'Website blocking has been disabled. Set a new goal to re-enable focus protection.',
+    'info'
+  );
 };
 
 const checkUrlRelevance = async (url: string, sender: chrome.runtime.MessageSender, sendResponse: (response: { shouldBlock: boolean; reason?: string }) => void): Promise<void> => {
@@ -99,6 +203,7 @@ const checkUrlRelevance = async (url: string, sender: chrome.runtime.MessageSend
   
   if (!isRelevant) {
     blockedSites.push(hostname);
+    await chrome.storage.local.set({ blockedSites });
     console.log('🚫 Blocked:', hostname);
     sendResponse({ shouldBlock: true, reason: `Not relevant to your goal: "${currentGoal}"` });
   } else {
@@ -125,20 +230,36 @@ chrome.webNavigation.onBeforeNavigate.addListener(async (details) => {
       chrome.tabs.update(details.tabId, {
         url: chrome.runtime.getURL('blocked.html') + '?site=' + encodeURIComponent(hostname) + '&goal=' + encodeURIComponent(currentGoal)
       });
+      showNotification(
+        '🚫 Site Blocked',
+        `${hostname} is not relevant to your goal. Stay focused!`,
+        'warning'
+      );
       return;
     }
 
     // Check with AI
+    console.log('🔍 Checking URL with AI/heuristic:', hostname);
     const isRelevant = await AiAgent.checkUrlRelevance(url, currentGoal);
     
     if (!isRelevant) {
       blockedSites.push(hostname);
+      await chrome.storage.local.set({ blockedSites });
       console.log('🚫 Navigation blocked:', hostname);
+      
+      // Show notification
+      showNotification(
+        '🚫 Distraction Blocked',
+        `${hostname} was blocked. Keep working on: "${currentGoal.substring(0, 40)}..."`,
+        'warning'
+      );
       
       // Redirect to block page
       chrome.tabs.update(details.tabId, {
         url: chrome.runtime.getURL('blocked.html') + '?site=' + encodeURIComponent(hostname) + '&goal=' + encodeURIComponent(currentGoal)
       });
+    } else {
+      console.log('✅ URL allowed:', hostname);
     }
   } catch (error) {
     console.error('Error checking URL:', error);

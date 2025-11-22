@@ -82,5 +82,123 @@ export const MetricsCollector = {
             metrics.errors = 0;
             metrics.switchCount = 0;
         }, 10000);
+
+        // Listen for AI interventions
+        chrome.runtime.onMessage.addListener((message) => {
+            if (message.type === 'AI_INTERVENTION') {
+                showAlert(message.payload);
+            }
+        });
+    },
+
+    showFlowStateChange: (status: string, score: number) => {
+        // Show visual feedback when flow state changes significantly
+        if (status === 'flow') {
+            showAlert({
+                classification: 'deep flow',
+                action: 'amplify flow',
+                reasoning: `Excellent! You're in flow state with a score of ${score}. Keep it up!`
+            });
+        } else if (status === 'distracted') {
+            showAlert({
+                classification: 'decreasing focus',
+                action: 'block distraction',
+                reasoning: `Your focus is slipping (score: ${score}). Take a breath and refocus on your goal.`
+            });
+        }
     }
 };
+
+// Visual alert overlay
+function showAlert(payload: any): void {
+    // Remove existing alert if any
+    const existing = document.getElementById('flow-state-alert');
+    if (existing) existing.remove();
+
+    const alert = document.createElement('div');
+    alert.id = 'flow-state-alert';
+    alert.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 24px;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        z-index: 999999;
+        max-width: 400px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        animation: slideIn 0.3s ease-out;
+    `;
+
+    const icon = payload.action === 'block distraction' ? '⚠️' : 
+                 payload.action === 'amplify flow' ? '🚀' : 
+                 payload.action === 'micro-break' ? '☕' : '💡';
+
+    alert.innerHTML = `
+        <style>
+            @keyframes slideIn {
+                from { transform: translateX(400px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(400px); opacity: 0; }
+            }
+        </style>
+        <div style="display: flex; align-items: start; gap: 12px;">
+            <div style="font-size: 32px;">${icon}</div>
+            <div style="flex: 1;">
+                <div style="font-weight: 600; font-size: 16px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    ${payload.classification}
+                </div>
+                <div style="font-size: 14px; line-height: 1.5; opacity: 0.95;">
+                    ${payload.reasoning}
+                </div>
+                <div style="margin-top: 12px; font-size: 12px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">
+                    ${payload.action.replace(/-/g, ' ')}
+                </div>
+            </div>
+            <button id="close-flow-alert" style="
+                background: rgba(255,255,255,0.2);
+                border: none;
+                color: white;
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.2s;
+            ">×</button>
+        </div>
+    `;
+
+    document.body.appendChild(alert);
+
+    // Auto-dismiss after 8 seconds
+    setTimeout(() => {
+        if (alert.parentNode) {
+            alert.style.animation = 'slideOut 0.3s ease-in';
+            setTimeout(() => alert.remove(), 300);
+        }
+    }, 8000);
+
+    // Close button
+    const closeBtn = document.getElementById('close-flow-alert');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            alert.style.animation = 'slideOut 0.3s ease-in';
+            setTimeout(() => alert.remove(), 300);
+        });
+        closeBtn.addEventListener('mouseenter', (e) => {
+            (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.3)';
+        });
+        closeBtn.addEventListener('mouseleave', (e) => {
+            (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.2)';
+        });
+    }
+}

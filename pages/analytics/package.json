@@ -1,0 +1,29 @@
+{
+  "name": "@extension/analytics",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.10.3",
+    "lucide-react": "^0.300.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0",
+    "@extension/ui": "workspace:*",
+    "@extension/storage": "workspace:*",
+    "@extension/i18n": "workspace:*"
+  },
+  "devDependencies": {
+    "@extension/vite-config": "workspace:*",
+    "@extension/tsconfig": "workspace:*",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10"
+  }
+}

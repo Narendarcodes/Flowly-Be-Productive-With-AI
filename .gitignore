@@ -5,7 +5,6 @@
 **/coverage
 
 # build
-**/dist
 **/build
 **/dist-zip
 chrome-extension/manifest.js

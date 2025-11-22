@@ -34,12 +34,12 @@
     "update-version": "bash bash-scripts/update_version.sh",
     "copy-env": "bash bash-scripts/copy_env.sh",
     "set-global-env": "bash bash-scripts/set_global_env.sh",
-    "module-manager": "pnpm -F module-manager start",
-    "postinstall": "pnpm copy-env"
+    "module-manager": "pnpm -F module-manager start"
   },
   "dependencies": {
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "lucide-react": "^0.462.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.9",

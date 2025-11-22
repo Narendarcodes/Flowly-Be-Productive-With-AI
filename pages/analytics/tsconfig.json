@@ -1,14 +1,11 @@
 {
-    "extends": "@extension/tsconfig/react",
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "@src/*": [
-                "src/*"
-            ]
-        }
+  "extends": "@extension/tsconfig/base",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["src/*"]
     },
-    "include": [
-        "src/**/*"
-    ]
+    "types": ["chrome", "node"]
+  },
+  "include": ["src/**/*", "vite.config.mts", "tailwind.config.ts"]
 }

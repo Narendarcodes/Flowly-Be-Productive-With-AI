@@ -15,7 +15,7 @@ Before testing, ensure you have:
    ```
    with your actual key:
    ```typescript
-   const GEMINI_API_KEY = 'AIzaSy...your-actual-key-here';
+   const GEMINI_API_KEY = process.env.CEB_GEMINI_API_KEY || '';
    ```
 
 ## Step 2: Build the Extension

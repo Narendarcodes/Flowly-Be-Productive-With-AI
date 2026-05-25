@@ -18,7 +18,7 @@ If the script doesn't work, run these commands in Command Prompt:
 
 ### Step 1: Navigate to project folder
 ```cmd
-cd C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite
+cd C:\\path\\to\\Flowly-Be-Productive-With-AI
 ```
 
 ### Step 2: Check current status
@@ -28,7 +28,7 @@ git status
 
 ### Step 3: Set remote URL
 ```cmd
-git remote set-url origin https://github.com/Narendarcodes/Flowly-Be-Productive-With-AI.git
+git remote set-url origin https://github.com/USERNAMEcodes/Flowly-Be-Productive-With-AI.git
 ```
 
 ### Step 4: Verify remote
@@ -37,8 +37,8 @@ git remote -v
 ```
 Should show:
 ```
-origin  https://github.com/Narendarcodes/Flowly-Be-Productive-With-AI.git (fetch)
-origin  https://github.com/Narendarcodes/Flowly-Be-Productive-With-AI.git (push)
+origin  https://github.com/USERNAMEcodes/Flowly-Be-Productive-With-AI.git (fetch)
+origin  https://github.com/USERNAMEcodes/Flowly-Be-Productive-With-AI.git (push)
 ```
 
 ### Step 5: Add all files
@@ -81,7 +81,7 @@ git push -u origin main
 
 ### Error: "Repository not found"
 **Solution**: Check repository exists
-1. Go to https://github.com/Narendarcodes/Flowly-Be-Productive-With-AI
+1. Go to https://github.com/USERNAMEcodes/Flowly-Be-Productive-With-AI
 2. If it doesn't exist, create it first on GitHub
 3. Then run the push commands
 
@@ -102,7 +102,7 @@ git push -u origin master
 1. Download GitHub Desktop: https://desktop.github.com/
 2. Open GitHub Desktop
 3. File → Add Local Repository
-4. Select: `C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite`
+4. Select: `C:\\path\\to\\Flowly-Be-Productive-With-AI`
 5. Click "Publish repository"
 6. Set repository name: `Flowly-Be-Productive-With-AI`
 7. Click "Publish"
@@ -112,7 +112,7 @@ git push -u origin master
 ## Verify Push Success
 
 After pushing, check:
-1. Go to: https://github.com/Narendarcodes/Flowly-Be-Productive-With-AI
+1. Go to: https://github.com/USERNAMEcodes/Flowly-Be-Productive-With-AI
 2. You should see all files
 3. README.md should display the Flow-State AI documentation
 

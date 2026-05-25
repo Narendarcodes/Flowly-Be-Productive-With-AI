@@ -1,13 +1,13 @@
 {
   "name": "flow-state-ai-assistant",
   "version": "1.0.0",
-  "description": "AI-powered flow state detection and productivity enhancement Chrome extension",
+  "description": "Chrome extension for flow-state scoring, distraction checks, and AI-assisted productivity prompts",
   "license": "MIT",
   "private": true,
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/flow-state-ai-assistant.git"
+    "url": "https://github.com/Narendarcodes/Flowly-Be-Productive-With-AI.git"
   },
   "type": "module",
   "scripts": {

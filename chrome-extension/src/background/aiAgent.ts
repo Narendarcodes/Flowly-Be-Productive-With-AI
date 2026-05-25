@@ -1,4 +1,4 @@
-const GEMINI_API_KEY = 'AIzaSyAVPtnPerbCGMplZJH6jNZ-PwKgr3Ud1Fc';
+const GEMINI_API_KEY = process.env.CEB_GEMINI_API_KEY || '';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 interface Metrics {
@@ -17,6 +17,15 @@ export interface AgentResponse {
 
 export const AiAgent = {
   analyzeFlowState: async (metrics: Metrics): Promise<AgentResponse> => {
+    if (!GEMINI_API_KEY) {
+      console.log('No Gemini API key configured - using fallback classification');
+      return {
+        classification: 'passive work',
+        action: 'continue flow',
+        reasoning: 'Local fallback because Gemini is not configured',
+      };
+    }
+
     const prompt = {
       contents: [
         {
@@ -80,9 +89,8 @@ export const AiAgent = {
   },
 
   checkUrlRelevance: async (url: string, goal: string): Promise<boolean> => {
-    // If no API key, use simple heuristic blocking
     if (!GEMINI_API_KEY) {
-      console.log('⚠️ No API key - using heuristic blocking');
+      console.log('No Gemini API key configured - using heuristic blocking');
       return AiAgent.heuristicUrlCheck(url);
     }
 

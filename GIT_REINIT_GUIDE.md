@@ -4,7 +4,7 @@
 
 The `.git` folder still contains the history and remote URL from the original boilerplate repository:
 - Old remote: `https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite.git`
-- New remote: `https://github.com/Narendarcodes/Flowly-Be-Productive-With-AI.git`
+- New remote: `https://github.com/USERNAMEcodes/Flowly-Be-Productive-With-AI.git`
 
 We need to remove the old Git history and create a fresh repository.
 
@@ -31,7 +31,7 @@ This will:
 Open Command Prompt and run these commands **one by one**:
 
 ```cmd
-cd C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite
+cd C:\\path\\to\\Flowly-Be-Productive-With-AI
 
 REM Backup old .git (optional)
 xcopy .git .git.backup /E /I /H /Y
@@ -50,7 +50,7 @@ REM Create initial commit
 git commit -m "feat: Flow-State AI Assistant - Complete implementation"
 
 REM Add your remote
-git remote add origin https://github.com/Narendarcodes/Flowly-Be-Productive-With-AI.git
+git remote add origin https://github.com/USERNAMEcodes/Flowly-Be-Productive-With-AI.git
 
 REM Push to GitHub
 git push -u origin main
@@ -62,7 +62,7 @@ git push -u origin main
 
 When you push, Git will ask for credentials:
 
-**Username**: `Narendarcodes`
+**Username**: `USERNAMEcodes`
 
 **Password**: Use a **Personal Access Token** (NOT your GitHub password)
 
@@ -95,7 +95,7 @@ When you push, Git will ask for credentials:
 ```
 .git/
 ├── Fresh Flow-State AI history
-├── Remote: Narendarcodes/Flowly-Be-Productive-With-AI
+├── Remote: USERNAMEcodes/Flowly-Be-Productive-With-AI
 └── 1 clean commit with all your code
 ```
 
@@ -111,12 +111,12 @@ After running the script, check:
    ```
    Should show:
    ```
-   origin  https://github.com/Narendarcodes/Flowly-Be-Productive-With-AI.git (fetch)
-   origin  https://github.com/Narendarcodes/Flowly-Be-Productive-With-AI.git (push)
+   origin  https://github.com/USERNAMEcodes/Flowly-Be-Productive-With-AI.git (fetch)
+   origin  https://github.com/USERNAMEcodes/Flowly-Be-Productive-With-AI.git (push)
    ```
 
 2. **GitHub verification**:
-   - Go to: https://github.com/Narendarcodes/Flowly-Be-Productive-With-AI
+   - Go to: https://github.com/USERNAMEcodes/Flowly-Be-Productive-With-AI
    - You should see all your files
    - README.md should display Flow-State AI documentation
 
@@ -127,7 +127,7 @@ After running the script, check:
 ### "Repository not found"
 **Make sure the repository exists on GitHub first!**
 
-1. Go to https://github.com/Narendarcodes
+1. Go to https://github.com/USERNAMEcodes
 2. Click **New repository**
 3. Name: `Flowly-Be-Productive-With-AI`
 4. Description: "AI-powered flow state detection Chrome extension"

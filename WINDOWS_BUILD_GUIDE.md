@@ -8,7 +8,7 @@ The error was just the postinstall script trying to use bash (which you don't ha
 
 ### METHOD 1: Use the Windows Build Script (EASIEST)
 1. Open File Explorer
-2. Navigate to: `C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite`
+2. Navigate to: `C:\\path\\to\\Flowly-Be-Productive-With-AI`
 3. **Double-click `build-windows.bat`**
 4. Wait for it to complete (1-2 minutes)
 5. Done! The `dist` folder will be created
@@ -17,7 +17,7 @@ The error was just the postinstall script trying to use bash (which you don't ha
 Open Command Prompt in the project folder and run these commands **one by one**:
 
 ```cmd
-cd C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite
+cd C:\\path\\to\\Flowly-Be-Productive-With-AI
 
 REM Create .env file
 copy .example.env .env
@@ -31,7 +31,7 @@ npx turbo build
 
 ### METHOD 3: PowerShell Alternative
 ```powershell
-cd C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite
+cd C:\\path\\to\\Flowly-Be-Productive-With-AI
 
 # Create .env file
 Copy-Item .example.env .env
@@ -74,7 +74,7 @@ dist/
 2. Go to: `chrome://extensions/`
 3. Enable "Developer mode" (top-right toggle)
 4. Click "Load unpacked"
-5. Navigate to: `C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite\dist`
+5. Navigate to: `C:\\path\\to\\Flowly-Be-Productive-With-AI\dist`
 6. Click "Select Folder"
 7. Done! ✅
 

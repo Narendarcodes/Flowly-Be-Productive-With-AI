@@ -3,12 +3,12 @@
 ## Problem
 You ran `pnpm install` from the wrong directory:
 ```
-C:\Users\NARENDAR\Documents\Hackathons\NITSHACK
+C:\\path\\to\\workspace
 ```
 
 But you need to be in:
 ```
-C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite
+C:\\path\\to\\Flowly-Be-Productive-With-AI
 ```
 
 ## Solution
@@ -22,21 +22,21 @@ pnpm build
 
 ### Option 2: Use the full path
 ```bash
-cd C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite
+cd C:\\path\\to\\Flowly-Be-Productive-With-AI
 pnpm install
 pnpm build
 ```
 
 ### Option 3: Use the build.bat file
 1. Open File Explorer
-2. Navigate to: `C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite`
+2. Navigate to: `C:\\path\\to\\Flowly-Be-Productive-With-AI`
 3. Double-click `build.bat`
 
 ## Complete Build Steps
 
 ```bash
 # Step 1: Navigate to project folder
-cd C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite
+cd C:\\path\\to\\Flowly-Be-Productive-With-AI
 
 # Step 2: Install dependencies
 pnpm install
@@ -66,5 +66,5 @@ And a `dist` folder will be created with `manifest.json` inside.
 1. Go to `chrome://extensions/`
 2. Enable "Developer mode"
 3. Click "Load unpacked"
-4. Select: `C:\Users\NARENDAR\Documents\Hackathons\NITSHACK\chrome-extension-boilerplate-react-vite\dist`
+4. Select: `C:\\path\\to\\Flowly-Be-Productive-With-AI\dist`
 5. Done! ✅

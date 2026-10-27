@@ -179,6 +179,16 @@ describe('session lifecycle', () => {
     expect(sum.avgScore).toBeGreaterThan(70);
     expect(sum.label).toBeNull();
   });
+  it('never counts more focused or total time than has elapsed', () => {
+    let s = createSession('Write report', 30, 0, 'id');
+    // Three rapid ticks 10 s apart, each claiming a full 60 s window.
+    for (let i = 1; i <= 3; i++) s = applyTick(s, sample, cloneDefaultModel(), i * 10_000);
+    expect(s.totalSec).toBeLessThanOrEqual(30);
+    expect(s.focusedSec).toBeLessThanOrEqual(s.totalSec);
+    const sum = summarizeSession(s, 30_000);
+    expect(sum.focusedSec).toBeLessThanOrEqual(sum.totalSec);
+    expect(sum.totalSec).toBeLessThanOrEqual((sum.endedAt - sum.startedAt) / 1000);
+  });
   it('handles expiry and remaining time', () => {
     const timed = createSession('g', 10, 0, 'a');
     const open = createSession('g', 0, 0, 'b');

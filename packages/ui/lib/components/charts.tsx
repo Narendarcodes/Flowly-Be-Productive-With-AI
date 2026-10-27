@@ -12,7 +12,15 @@ export const Sparkline = ({
   testId?: string;
 }) => {
   if (points.length < 2) {
-    return <div style={{ width, height }} className="rounded bg-zinc-100" data-testid={testId} />;
+    return (
+      <div
+        style={{ width, height }}
+        className="text-2xs flex items-center justify-center rounded border border-dashed border-zinc-200 text-zinc-400"
+        data-testid={testId}
+        data-empty="true">
+        Focus trend appears after the first minute
+      </div>
+    );
   }
   const t0 = points[0].t;
   const span = Math.max(1, points[points.length - 1].t - t0);

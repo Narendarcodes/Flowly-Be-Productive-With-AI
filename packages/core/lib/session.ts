@@ -50,11 +50,14 @@ export const applyTick = (
   const result = tick(session.flow, sample, model, cfg, now);
   const vector = toVector(result.features);
   const timeline = [...session.timeline, { t: now, score: result.state.score }];
+  // Never count more time than has actually elapsed since the session started.
+  const elapsedSec = Math.max(0, Math.floor((now - session.startedAt) / 1000));
+  const totalSec = Math.min(elapsedSec, session.totalSec + Math.round(sample.windowMs / 1000));
   return {
     ...session,
     flow: result.state,
-    focusedSec: session.focusedSec + result.focusedSec,
-    totalSec: session.totalSec + Math.round(sample.windowMs / 1000),
+    focusedSec: Math.min(totalSec, session.focusedSec + result.focusedSec),
+    totalSec,
     tabSwitches: session.tabSwitches + sample.tabSwitches,
     timeline: timeline.length > cfg.timelineMax ? downsample(timeline, Math.floor(cfg.timelineMax / 2)) : timeline,
     featureSum: session.featureSum.map((s, i) => s + (vector[i] ?? 0)),
@@ -70,13 +73,16 @@ export const summarizeSession = (session: ActiveSession, now: number): SessionSu
     session.timeline.length === 0
       ? 0
       : Math.round((session.timeline.reduce((s, p) => s + p.score, 0) / session.timeline.length) * 10) / 10;
+  const endedAt = session.endsAt !== null ? Math.min(now, session.endsAt) : now;
+  const elapsedSec = Math.max(0, Math.floor((endedAt - session.startedAt) / 1000));
+  const totalSec = Math.min(elapsedSec, session.totalSec);
   return {
     id: session.id,
     goal: session.goal,
     startedAt: session.startedAt,
-    endedAt: session.endsAt !== null ? Math.min(now, session.endsAt) : now,
-    focusedSec: session.focusedSec,
-    totalSec: session.totalSec,
+    endedAt,
+    focusedSec: Math.min(totalSec, session.focusedSec),
+    totalSec,
     avgScore,
     tabSwitches: session.tabSwitches,
     timeline: downsample(session.timeline, 60),

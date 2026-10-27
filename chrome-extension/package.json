@@ -1,7 +1,7 @@
 {
-  "name": "flow-state-ai-assistant",
-  "version": "1.0.0",
-  "description": "AI-powered flow state detection and productivity enhancement",
+  "name": "flowly-extension",
+  "version": "2.0.0",
+  "description": "Flowly: on-device focus scoring, goal-aware distraction blocking and optional AI",
   "type": "module",
   "private": true,
   "sideEffects": false,
@@ -12,17 +12,16 @@
     "ready": "tsc -b pre-build.tsconfig.json",
     "build": "vite build",
     "dev": "vite build --mode development",
-    "test": "vitest run",
     "lint": "eslint .",
     "lint:fix": "pnpm lint --fix",
     "prettier": "prettier . --write --ignore-path ../.prettierignore",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@extension/core": "workspace:*",
     "@extension/env": "workspace:*",
     "@extension/shared": "workspace:*",
-    "@extension/storage": "workspace:*",
-    "webextension-polyfill": "^0.12.0"
+    "@extension/storage": "workspace:*"
   },
   "devDependencies": {
     "@extension/dev-utils": "workspace:*",
@@ -30,7 +29,6 @@
     "@extension/tsconfig": "workspace:*",
     "@extension/vite-config": "workspace:*",
     "@laynezh/vite-plugin-lib-assets": "^1.1.0",
-    "magic-string": "^0.30.17",
-    "ts-loader": "^9.5.2"
+    "magic-string": "^0.30.17"
   }
 }

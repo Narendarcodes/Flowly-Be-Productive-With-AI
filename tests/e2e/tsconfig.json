@@ -1,12 +1,7 @@
 {
-  "extends": "@extension/tsconfig/module",
+  "extends": "@extension/tsconfig/base",
   "compilerOptions": {
-    "lib": ["dom"],
-    "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework"],
-    "resolveJsonModule": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "types": ["node", "chrome"]
   },
-  "include": ["specs", "config", "helpers"]
+  "include": ["specs", "playwright.config.ts", "fixtures.ts"]
 }

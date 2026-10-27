@@ -1,149 +1,105 @@
-# Flowly - Be Productive With AI
+# Flowly — be productive with (optional) AI
 
-Flowly is a Chrome extension that estimates a user's flow state from browser activity and responds with lightweight productivity interventions. It combines content scripts, a background worker, extension UI pages, local storage, and optional Gemini analysis.
+Flowly is a Chrome extension (Manifest V3) that helps you stay on one goal. You start a focus
+session, Flowly scores your focus on-device, keeps distracting sites out of the way, and learns
+from a one-tap "Were you focused?" check-in after each session.
 
-The project is experimental. The scoring model is heuristic-first, and AI calls should be treated as an enhancement rather than the core source of truth.
+**Privacy first:** scoring, relevance checks and the learning model all run locally. No API key is
+bundled, no account is needed, and nothing leaves your browser unless you explicitly turn on the
+Gemini tiebreak with your own key. See [PRIVACY.md](PRIVACY.md).
 
-![Version](https://img.shields.io/badge/version-1.0.0-0f766e.svg)
-![Manifest](https://img.shields.io/badge/manifest-v3-f59e0b.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6.svg)
-![React](https://img.shields.io/badge/React-19-61DAFB.svg)
+<p>
+  <img src="docs/screenshots/popup.png" alt="Popup" height="260" />
+  <img src="docs/screenshots/side-panel.png" alt="Side panel" height="260" />
+  <img src="docs/screenshots/blocked.png" alt="Blocked page" height="260" />
+</p>
 
-## What It Does
+## Features
 
-- Tracks browser activity signals such as typing cadence, errors, mouse movement, and tab switching
-- Converts those signals into a flow score from `0` to `100`
-- Classifies the current state as passive, active, flow, distracted, or break
-- Uses optional Gemini analysis for flow-state reasoning and URL relevance checks
-- Blocks common distraction sites when they conflict with the user's current goal
-- Provides extension surfaces for popup, side panel, analytics, options, new tab, and content UI
-
-## Architecture
-
-```text
-content scripts
-  -> collect interaction metrics
-  -> background service worker
-  -> flow engine
-  -> optional AI agent
-  -> storage and UI updates
-
-extension pages
-  -> popup
-  -> side panel
-  -> analytics
-  -> options
-  -> new tab
-```
-
-## Tech Stack
-
-| Area | Tools |
+| Surface | What it does |
 | --- | --- |
-| Extension | Chrome Manifest V3 |
-| UI | React 19, TypeScript, Tailwind CSS |
-| Build | Vite, Turbo, pnpm |
-| Storage | Chrome Storage API |
-| AI | Gemini API through configurable env value |
-| Tests | WebdriverIO E2E structure |
+| **Popup** | 3-second glance: focus score, goal, session timer, start/stop. |
+| **Side panel** | Main surface: set the goal and length, live score and streak, whether the current tab fits your goal, focus nudges and the post-session check-in. |
+| **Blocked page** | Shown instead of a blocked site: your goal, time left, *Unblock for 5 minutes*. |
+| **Analytics** | Focus minutes per day (14 days) and a timeline of past sessions with score sparklines. |
+| **Options** | Blocklist / allowlist, strict mode, privacy toggles, optional AI provider and key, reset all data. |
 
-## Repository Layout
+How it decides:
 
-```text
-chrome-extension/
-  manifest.ts
-  src/background/
-    aiAgent.ts
-    flowEngine.ts
-    index.ts
-pages/
-  popup/
-  side-panel/
-  analytics/
-  content/
-  content-ui/
-  options/
-  new-tab/
-packages/
-  shared/
-  storage/
-  ui/
-  vite-config/
-tests/e2e/
-```
+- **Focus score (0–100)** — a pure, unit-tested scoring module: activity *counts* (keys, pointer,
+  scroll), tab switches per minute, idle state (`chrome.idle`) and the active tab's relevance to the
+  goal → normalised features → heuristic score (cold start) blended with a tiny on-device
+  **logistic-regression model** → EMA smoothing → status with hysteresis
+  (`Distracted / Drifting / Focused / In flow / Idle`).
+- **Learning** — after each session you answer *Were you focused?*. The answer is stored locally
+  and the model takes one SGD step on that session's average features. After ~10 check-ins the
+  personal model fully replaces the heuristic.
+- **Distraction check** — rules first (your allowlist, your blocklist, built-in work tools), then
+  on-device semantic similarity between your goal and the tab title/URL using
+  **transformers.js + `Xenova/all-MiniLM-L6-v2`** in an offscreen document (keyword/TF-IDF
+  similarity as fallback). Unclear cases can optionally go to an LLM tiebreak.
+- **Blocking** — `declarativeNetRequest` dynamic redirect rules, active only while a session runs.
+  *Strict mode* also blocks pages the relevance check marks as off-goal.
+- **Optional AI** — Chrome's built-in **Gemini Nano** (Prompt API) when available, or
+  **`gemini-2.5-flash-lite`** with *your own* key (stored in `chrome.storage.local`). Structured
+  JSON output, validated with Zod, debounced to one call per 20 s, cached per page.
 
 ## Setup
 
-Install dependencies:
+Requirements: Node 22 (see `.nvmrc`), pnpm 10, Chrome/Chromium 116+.
 
-```powershell
+```bash
 pnpm install
+pnpm copy-env       # creates .env from .example.env (non-secret build flags only)
+pnpm build          # production build into dist/
+pnpm dev            # watch mode with auto-reload
 ```
 
-Create a local environment file:
+### Load unpacked
 
-```powershell
-Copy-Item .example.env .env
-```
+1. Open `chrome://extensions` and enable **Developer mode**.
+2. Click **Load unpacked** and select the `dist/` folder.
+3. Pin Flowly, click it, type a goal and press **Start focus session**.
 
-Add a Gemini key only if you want AI-backed analysis:
+The first relevance check with the on-device model downloads the model weights (~23 MB) from the
+Hugging Face Hub once; they are cached by the browser. Turn it off under *Options → Privacy* to use
+keyword matching only.
 
-```env
-CEB_GEMINI_API_KEY=replace_with_your_gemini_key
-```
+## Testing
 
-If `CEB_GEMINI_API_KEY` is not set, the extension falls back to local heuristic checks.
-
-## Build
-
-```powershell
+```bash
+pnpm copy-env && pnpm set-global-env   # once, on a fresh clone
+pnpm type-check     # TypeScript across all packages
+pnpm lint           # ESLint + Prettier
+pnpm test           # Vitest unit tests (packages/core)
 pnpm build
+pnpm -F @extension/e2e e2e   # Playwright: loads dist/ in headless Chromium
 ```
 
-For a fast Windows build:
+The E2E suite starts a local web server (test hostnames are mapped to 127.0.0.1, so no real sites
+are contacted) and checks: popup rendering, starting a session from the popup, redirecting a
+blocklisted site to the blocked page, *Unblock for 5 minutes*, the flow score reacting to simulated
+activity and distraction, options persistence (lists, privacy, AI key), strict-mode auto-blocking,
+the focus check-in training the local model, analytics, and reset.
 
-```powershell
-.\build-quick.bat
+- Use a system Chromium with `CHROME_PATH=/usr/bin/chromium`.
+- `FLOWLY_E2E_EMBEDDINGS=1` additionally downloads the embedding model and checks real on-device
+  similarity in the offscreen document. `FLOWLY_HF_MIRROR_DIR=/path` serves the model files from a
+  local copy instead (for sandboxes without direct Hub access).
+
+CI (`.github/workflows/ci.yml`) runs install → type-check → lint → unit tests → build → E2E on every
+push and pull request.
+
+## Project layout
+
+```
+chrome-extension/      manifest + background service worker
+packages/core/         pure logic: scoring, logistic model, relevance, blocking rules, AI parsing, storage
+packages/ui/           shared React components (Button, Card, ScoreDial, charts, hooks)
+pages/popup|side-panel|options|analytics|blocked/   extension pages (React 19 + Tailwind)
+pages/offscreen/       offscreen document: transformers.js embeddings, Chrome built-in AI
+pages/content/         content script: privacy-first activity counter (numbers only)
+tests/e2e/             Playwright end-to-end tests
 ```
 
-Load the built extension:
-
-1. Open `chrome://extensions/`
-2. Enable Developer mode
-3. Click Load unpacked
-4. Select the `dist` folder
-
-## Development
-
-```powershell
-pnpm dev
-pnpm type-check
-pnpm lint
-pnpm e2e
-```
-
-## Security Notes
-
-- Do not hardcode Gemini or other API keys in extension source.
-- Keep `.env` local. It is ignored by git.
-- Treat browser activity metrics as sensitive user data.
-- Review `host_permissions` before publishing because this extension currently requests broad page access.
-- The project should not be published until permissions are narrowed and privacy copy is written.
-
-## Current Status
-
-Working areas:
-
-- Flow score calculation
-- Background service worker wiring
-- Popup, side panel, analytics, options, and new-tab surfaces
-- Heuristic URL relevance checks
-- Optional Gemini integration through env configuration
-
-Needs improvement:
-
-- More tests around the flow scoring algorithm
-- Safer defaults for permissions and host access
-- A real privacy policy before public distribution
-- Better user controls for intervention frequency
-- Chrome Web Store packaging checklist
+More detail in [ARCHITECTURE.md](ARCHITECTURE.md).

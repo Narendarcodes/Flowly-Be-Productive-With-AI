@@ -1,56 +1,103 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["CEB_*", "CLI_CEB_*"],
-  "globalDependencies": [".env"],
-  "concurrency": "12",
+  "globalEnv": [
+    "CEB_*",
+    "CLI_CEB_*"
+  ],
+  "globalDependencies": [
+    ".env"
+  ],
+  "concurrency": "4",
   "tasks": {
     "ready": {
-      "dependsOn": ["^ready"],
-      "outputs": ["../../dist/**", "dist/**"],
+      "dependsOn": [
+        "^ready"
+      ],
+      "outputs": [
+        "../../dist/**",
+        "dist/**"
+      ],
       "cache": false
     },
     "dev": {
-      "dependsOn": ["ready"],
-      "outputs": ["../../dist/**", "dist/**"],
+      "dependsOn": [
+        "ready"
+      ],
+      "outputs": [
+        "../../dist/**",
+        "dist/**"
+      ],
       "cache": false,
       "persistent": true
     },
     "build": {
-      "dependsOn": ["ready", "^build"],
-      "outputs": ["../../dist/**", "dist/**"],
-      "cache": false
-    },
-    "e2e": {
+      "dependsOn": [
+        "ready",
+        "^build"
+      ],
+      "outputs": [
+        "../../dist/**",
+        "dist/**"
+      ],
       "cache": false
     },
     "type-check": {
+      "dependsOn": [
+        "ready",
+        "^ready"
+      ],
       "cache": false
     },
     "lint": {
+      "dependsOn": [
+        "ready",
+        "^ready"
+      ],
       "cache": false
     },
     "lint:fix": {
+      "dependsOn": [
+        "ready",
+        "^ready"
+      ],
       "cache": false
     },
     "format": {
-      "dependsOn": ["^format"],
+      "dependsOn": [
+        "^format"
+      ],
       "cache": false
     },
     "clean:node_modules": {
-      "dependsOn": ["^clean:node_modules"],
+      "dependsOn": [
+        "^clean:node_modules"
+      ],
       "cache": false
     },
     "clean:turbo": {
-      "dependsOn": ["^clean:turbo"],
+      "dependsOn": [
+        "^clean:turbo"
+      ],
       "cache": false
     },
     "clean:bundle": {
-      "dependsOn": ["^clean:bundle"],
+      "dependsOn": [
+        "^clean:bundle"
+      ],
       "cache": false
     },
     "clean": {
-      "dependsOn": ["^clean"],
+      "dependsOn": [
+        "^clean"
+      ],
+      "cache": false
+    },
+    "test": {
+      "dependsOn": [
+        "ready",
+        "^ready"
+      ],
       "cache": false
     }
   }

@@ -1,7 +1,7 @@
 {
-  "name": "flow-state-ai-assistant",
-  "version": "1.0.0",
-  "description": "Chrome extension for flow-state scoring, distraction checks, and AI-assisted productivity prompts",
+  "name": "flowly",
+  "version": "2.0.0",
+  "description": "Flowly: a privacy-first Chrome extension for on-device focus scoring and goal-aware distraction blocking",
   "license": "MIT",
   "private": true,
   "sideEffects": false,
@@ -19,14 +19,10 @@
     "type-check": "turbo type-check",
     "base-build": "pnpm clean:bundle && turbo build",
     "build": "pnpm set-global-env && pnpm base-build",
-    "build:firefox": "pnpm set-global-env CLI_CEB_FIREFOX=true && pnpm base-build",
     "base-dev": "pnpm clean:bundle && turbo ready && turbo watch dev",
     "dev": "pnpm set-global-env CLI_CEB_DEV=true && pnpm base-dev",
-    "dev:firefox": "pnpm set-global-env CLI_CEB_DEV=true CLI_CEB_FIREFOX=true && pnpm base-dev",
     "zip": "pnpm build && pnpm -F zipper zip",
-    "zip:firefox": "pnpm build:firefox && pnpm -F zipper zip",
-    "e2e": "pnpm zip && turbo e2e",
-    "e2e:firefox": "pnpm zip:firefox && turbo e2e",
+    "e2e": "pnpm build && pnpm -F @extension/e2e e2e",
     "lint": "turbo lint --continue",
     "lint:fix": "turbo lint:fix --continue",
     "format": "turbo format --continue -- --cache --cache-location node_modules/.cache/.prettiercache",
@@ -34,12 +30,11 @@
     "update-version": "bash bash-scripts/update_version.sh",
     "copy-env": "bash bash-scripts/copy_env.sh",
     "set-global-env": "bash bash-scripts/set_global_env.sh",
-    "module-manager": "pnpm -F module-manager start"
+    "test": "turbo test"
   },
   "dependencies": {
     "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "lucide-react": "^0.462.0"
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.9",

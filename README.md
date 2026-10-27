@@ -50,6 +50,7 @@ Requirements: Node 22 (see `.nvmrc`), pnpm 10, Chrome/Chromium 116+.
 
 ```bash
 pnpm install
+pnpm copy-env       # creates .env from .example.env (non-secret build flags only)
 pnpm build          # production build into dist/
 pnpm dev            # watch mode with auto-reload
 ```
@@ -67,6 +68,7 @@ keyword matching only.
 ## Testing
 
 ```bash
+pnpm copy-env && pnpm set-global-env   # once, on a fresh clone
 pnpm type-check     # TypeScript across all packages
 pnpm lint           # ESLint + Prettier
 pnpm test           # Vitest unit tests (packages/core)

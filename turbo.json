@@ -43,12 +43,24 @@
       "cache": false
     },
     "type-check": {
+      "dependsOn": [
+        "ready",
+        "^ready"
+      ],
       "cache": false
     },
     "lint": {
+      "dependsOn": [
+        "ready",
+        "^ready"
+      ],
       "cache": false
     },
     "lint:fix": {
+      "dependsOn": [
+        "ready",
+        "^ready"
+      ],
       "cache": false
     },
     "format": {
@@ -82,6 +94,10 @@
       "cache": false
     },
     "test": {
+      "dependsOn": [
+        "ready",
+        "^ready"
+      ],
       "cache": false
     }
   }

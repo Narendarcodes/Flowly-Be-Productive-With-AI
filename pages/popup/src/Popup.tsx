@@ -1,83 +1,150 @@
+import { formatDuration, KEYS, remainingMs, sanitizeSettings } from '@extension/core';
+import { Button, ScoreDial, sendToBackground, TextInput, useChromeStorage, useNow } from '@extension/ui';
 import { useEffect, useState } from 'react';
-import '@src/Popup.css';
+import type { ActiveSession, BackgroundResponse } from '@extension/core';
 
-export default function Popup() {
-  const [flowState, setFlowState] = useState<any>(null);
+const DURATIONS = [25, 50, 90];
+
+const openPage = (path: string) => chrome.tabs.create({ url: chrome.runtime.getURL(path) });
+
+const openSidePanel = async () => {
+  const win = await chrome.windows.getCurrent();
+  if (win.id !== undefined) await chrome.sidePanel.open({ windowId: win.id });
+  window.close();
+};
+
+const Popup = () => {
+  const [session] = useChromeStorage<ActiveSession>(KEYS.session);
+  const [rawSettings, settingsLoaded] = useChromeStorage<unknown>(KEYS.settings);
+  const [pendingLabel] = useChromeStorage<string>(KEYS.pendingLabel);
+  const settings = sanitizeSettings(rawSettings);
+  const [goal, setGoal] = useState('');
+  const [minutes, setMinutes] = useState(50);
+  const [error, setError] = useState<string | null>(null);
+  const now = useNow();
 
   useEffect(() => {
-    // Initial fetch
-    chrome.storage.local.get('flowState', (data) => {
-      if (data.flowState) setFlowState(data.flowState);
-    });
+    if (settingsLoaded) {
+      setGoal(settings.goal);
+      setMinutes(settings.sessionMinutes || 50);
+    }
+    // Initialise the form once from stored settings.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settingsLoaded]);
 
-    // Poll for updates
-    const interval = setInterval(() => {
-      chrome.storage.local.get('flowState', (data) => {
-        if (data.flowState) setFlowState(data.flowState);
-      });
-    }, 1000);
+  const start = async () => {
+    setError(null);
+    const res = await sendToBackground<BackgroundResponse>({ type: 'START_SESSION', payload: { goal, minutes } });
+    if (!res?.ok) setError(res?.error ?? 'Could not start');
+  };
 
-    return () => clearInterval(interval);
-  }, []);
-
-  if (!flowState) return <div className="p-4 bg-slate-900 text-white h-screen flex items-center justify-center">Loading...</div>;
+  const left = session ? remainingMs(session, now) : null;
 
   return (
-    <div className="w-80 bg-slate-900 text-white min-h-[400px] p-6 font-sans">
-      <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-          Flow State AI
-        </h1>
-        <div className={`h-3 w-3 rounded-full ${flowState.status === 'flow' ? 'bg-green-400 shadow-[0_0_10px_#4ade80]' : 'bg-slate-600'}`} />
+    <main className="flex flex-col gap-4 p-4">
+      <header className="flex items-center justify-between">
+        <span className="text-sm font-semibold tracking-tight text-zinc-900">Flowly</span>
+        <Button variant="ghost" size="sm" onClick={() => chrome.runtime.openOptionsPage()} aria-label="Settings">
+          Settings
+        </Button>
       </header>
 
-      <div className="text-center mb-8">
-        <div className="relative inline-flex items-center justify-center">
-          <svg className="w-32 h-32 transform -rotate-90">
-            <circle
-              className="text-slate-800"
-              strokeWidth="8"
-              stroke="currentColor"
-              fill="transparent"
-              r="58"
-              cx="64"
-              cy="64"
-            />
-            <circle
-              className="text-blue-500 transition-all duration-1000 ease-out"
-              strokeWidth="8"
-              strokeDasharray={365}
-              strokeDashoffset={365 - (365 * flowState.score) / 100}
-              strokeLinecap="round"
-              stroke="currentColor"
-              fill="transparent"
-              r="58"
-              cx="64"
-              cy="64"
-            />
-          </svg>
-          <div className="absolute text-4xl font-light">{Math.round(flowState.score)}</div>
-        </div>
-        <div className="mt-2 text-slate-400 uppercase tracking-widest text-xs">{flowState.status}</div>
-      </div>
+      {session ? (
+        <section className="flex items-center gap-4" data-testid="popup-active">
+          <ScoreDial
+            score={session.flow.ticks > 0 ? session.flow.score : null}
+            status={session.flow.status}
+            size={92}
+          />
+          <div className="min-w-0 flex-1">
+            <div className="text-2xs uppercase tracking-wide text-zinc-500">Goal</div>
+            <p className="truncate text-sm font-medium text-zinc-900" title={session.goal} data-testid="popup-goal">
+              {session.goal}
+            </p>
+            <div className="text-2xs mt-2 uppercase tracking-wide text-zinc-500">
+              {left === null ? 'Elapsed' : 'Left'}
+            </div>
+            <p className="text-lg font-semibold tabular-nums text-zinc-900" data-testid="popup-timer">
+              {formatDuration(left ?? now - session.startedAt)}
+            </p>
+          </div>
+        </section>
+      ) : (
+        <section className="flex flex-col gap-2" data-testid="popup-idle">
+          <label htmlFor="popup-goal" className="text-2xs uppercase tracking-wide text-zinc-500">
+            What are you working on?
+          </label>
+          <TextInput
+            id="popup-goal"
+            value={goal}
+            maxLength={300}
+            placeholder="e.g. Finish the API docs"
+            onChange={e => setGoal(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && goal.trim() && void start()}
+          />
+          <div className="flex gap-1" role="group" aria-label="Session length">
+            {DURATIONS.map(m => (
+              <Button
+                key={m}
+                size="sm"
+                variant={minutes === m ? 'primary' : 'secondary'}
+                className="flex-1"
+                onClick={() => setMinutes(m)}>
+                {m} min
+              </Button>
+            ))}
+          </div>
+          {error ? <p className="text-xs text-red-700">{error}</p> : null}
+        </section>
+      )}
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-slate-800/50 p-3 rounded-lg text-center">
-          <div className="text-2xl font-light">{Math.floor(flowState.streak / 60)}m</div>
-          <div className="text-[10px] text-slate-500 uppercase">Current Streak</div>
-        </div>
-        <div className="bg-slate-800/50 p-3 rounded-lg text-center">
-          <div className="text-2xl font-light">{Math.round(flowState.focusQuality || 0)}%</div>
-          <div className="text-[10px] text-slate-500 uppercase">Focus Quality</div>
-        </div>
-      </div>
+      {session ? (
+        <Button variant="secondary" onClick={() => sendToBackground({ type: 'STOP_SESSION' })} data-testid="popup-stop">
+          Stop session
+        </Button>
+      ) : (
+        <Button onClick={start} disabled={!goal.trim()} data-testid="popup-start">
+          Start focus session
+        </Button>
+      )}
 
-      <button
-        onClick={() => chrome.tabs.create({ url: chrome.runtime.getURL('analytics/index.html') })}
-        className="w-full py-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium"
-      >
-        View Analytics Dashboard
-      </button>
-    </div>
+      {pendingLabel && !session ? (
+        <div className="flex items-center justify-between rounded-md bg-zinc-100 px-3 py-2 text-xs text-zinc-700">
+          <span>Were you focused last session?</span>
+          <span className="flex gap-1">
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() =>
+                sendToBackground({ type: 'SUBMIT_LABEL', payload: { sessionId: pendingLabel, focused: true } })
+              }>
+              Yes
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() =>
+                sendToBackground({ type: 'SUBMIT_LABEL', payload: { sessionId: pendingLabel, focused: false } })
+              }>
+              No
+            </Button>
+          </span>
+        </div>
+      ) : null}
+
+      <nav className="flex justify-between border-t border-zinc-200 pt-3 text-xs">
+        <button type="button" className="text-zinc-600 hover:text-zinc-900" onClick={openSidePanel}>
+          Side panel
+        </button>
+        <button
+          type="button"
+          className="text-zinc-600 hover:text-zinc-900"
+          onClick={() => openPage('analytics/index.html')}>
+          Analytics
+        </button>
+      </nav>
+    </main>
   );
-}
+};
+
+export default Popup;

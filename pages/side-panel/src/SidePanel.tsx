@@ -1,159 +1,232 @@
-import '@src/SidePanel.css';
-import { useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
-import { exampleThemeStorage } from '@extension/storage';
-import { cn, ErrorDisplay, LoadingSpinner } from '@extension/ui';
+import { formatDuration, KEYS, remainingMs, sanitizeSettings } from '@extension/core';
+import {
+  Button,
+  Card,
+  ScoreDial,
+  SectionTitle,
+  sendToBackground,
+  Sparkline,
+  Stat,
+  TextArea,
+  useChromeStorage,
+  useNow,
+} from '@extension/ui';
 import { useEffect, useState } from 'react';
-import { Activity, TrendingUp, Clock, Zap } from 'lucide-react';
+import type { ActiveSession, BackgroundResponse, TabRelevance } from '@extension/core';
+
+const DURATIONS: { label: string; value: number }[] = [
+  { label: '25 min', value: 25 },
+  { label: '50 min', value: 50 },
+  { label: '90 min', value: 90 },
+  { label: 'Open', value: 0 },
+];
+
+const VERDICT_TEXT: Record<TabRelevance['verdict'], string> = {
+  allow: 'On goal',
+  unsure: 'Unclear',
+  block: 'Off goal',
+};
+
+const METHOD_TEXT: Record<TabRelevance['method'], string> = {
+  rule: 'your lists',
+  embedding: 'on-device model',
+  keyword: 'keyword match',
+  llm: 'AI tiebreak',
+  none: '—',
+};
+
+const FocusPrompt = ({ session, pendingLabel }: { session: ActiveSession | undefined; pendingLabel?: string }) => {
+  if (pendingLabel && !session) {
+    const answer = (focused: boolean) =>
+      sendToBackground({ type: 'SUBMIT_LABEL', payload: { sessionId: pendingLabel, focused } });
+    return (
+      <Card data-testid="label-prompt">
+        <p className="text-sm font-medium text-zinc-900">Were you focused during that session?</p>
+        <p className="mt-1 text-xs text-zinc-500">
+          Your answer trains a small model on this device so the score fits how you work.
+        </p>
+        <div className="mt-3 flex gap-2">
+          <Button size="sm" onClick={() => answer(true)} data-testid="label-yes">
+            Yes
+          </Button>
+          <Button size="sm" variant="secondary" onClick={() => answer(false)} data-testid="label-no">
+            Not really
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => sendToBackground({ type: 'DISMISS_LABEL' })}>
+            Skip
+          </Button>
+        </div>
+      </Card>
+    );
+  }
+  if (session && (session.flow.status === 'distracted' || session.flow.status === 'drifting')) {
+    return (
+      <Card className="border-accent-muted bg-accent-soft" data-testid="focus-nudge">
+        <p className="text-sm text-zinc-800">
+          Attention is drifting. Close what you don’t need and take the next small step on{' '}
+          <span className="font-medium">{session.goal}</span>.
+        </p>
+      </Card>
+    );
+  }
+  return null;
+};
 
 const SidePanel = () => {
-  const { isLight } = useStorage(exampleThemeStorage);
-  const [flowState, setFlowState] = useState<any>(null);
+  const [session] = useChromeStorage<ActiveSession>(KEYS.session);
+  const [rawSettings, loaded] = useChromeStorage<unknown>(KEYS.settings);
+  const [pendingLabel] = useChromeStorage<string>(KEYS.pendingLabel);
+  const [relevance] = useChromeStorage<TabRelevance>(KEYS.tabRelevance, 'session');
+  const settings = sanitizeSettings(rawSettings);
+  const [goal, setGoal] = useState('');
+  const [minutes, setMinutes] = useState(50);
+  const [error, setError] = useState<string | null>(null);
+  const now = useNow();
 
   useEffect(() => {
-    // Load flow state from storage
-    const loadFlowState = () => {
-      chrome.storage.local.get('flowState', (data) => {
-        if (data.flowState) setFlowState(data.flowState);
-      });
-    };
+    if (loaded) {
+      setGoal(settings.goal);
+      setMinutes(settings.sessionMinutes);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded]);
 
-    loadFlowState();
-    const interval = setInterval(loadFlowState, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const start = async () => {
+    setError(null);
+    const res = await sendToBackground<BackgroundResponse>({ type: 'START_SESSION', payload: { goal, minutes } });
+    if (!res?.ok) setError(res?.error ?? 'Could not start the session');
+  };
+
+  const left = session ? remainingMs(session, now) : null;
 
   return (
-    <div className={cn('min-h-screen p-4', isLight ? 'bg-slate-50' : 'bg-gray-900')}>
-      <div className="space-y-4">
-        {/* Header */}
-        <div className="text-center mb-6">
-          <h1 className={cn('text-2xl font-bold mb-2', isLight ? 'text-slate-900' : 'text-white')}>
-            Flow State
-          </h1>
-          <p className={cn('text-sm', isLight ? 'text-slate-600' : 'text-slate-400')}>
-            Real-time monitoring
-          </p>
+    <main className="mx-auto flex max-w-md flex-col gap-4 p-4">
+      <header className="flex items-center justify-between">
+        <h1 className="text-base font-semibold tracking-tight text-zinc-900">Flowly</h1>
+        <div className="flex gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => chrome.tabs.create({ url: chrome.runtime.getURL('analytics/index.html') })}>
+            Analytics
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => chrome.runtime.openOptionsPage()}>
+            Settings
+          </Button>
         </div>
+      </header>
 
-        {/* Flow Score */}
-        {flowState && (
-          <>
-            <div className={cn('p-6 rounded-2xl text-center',
-              isLight ? 'bg-white shadow-sm' : 'bg-slate-800')}>
-              <div className="relative inline-flex items-center justify-center mb-4">
-                <svg className="w-32 h-32 transform -rotate-90">
-                  <circle
-                    className={isLight ? 'text-slate-200' : 'text-slate-700'}
-                    strokeWidth="8"
-                    stroke="currentColor"
-                    fill="transparent"
-                    r="58"
-                    cx="64"
-                    cy="64"
-                  />
-                  <circle
-                    className="text-blue-500 transition-all duration-1000"
-                    strokeWidth="8"
-                    strokeDasharray={365}
-                    strokeDashoffset={365 - (365 * flowState.score) / 100}
-                    strokeLinecap="round"
-                    stroke="currentColor"
-                    fill="transparent"
-                    r="58"
-                    cx="64"
-                    cy="64"
-                  />
-                </svg>
-                <div className={cn('absolute text-4xl font-light',
-                  isLight ? 'text-slate-900' : 'text-white')}>
-                  {Math.round(flowState.score)}
-                </div>
-              </div>
-              <div className={cn('text-xs uppercase tracking-widest',
-                isLight ? 'text-slate-500' : 'text-slate-400')}>
-                {flowState.status}
-              </div>
+      <Card>
+        <SectionTitle>Goal</SectionTitle>
+        {session ? (
+          <div className="mt-2">
+            <p className="text-sm font-medium text-zinc-900" data-testid="panel-goal">
+              {session.goal}
+            </p>
+            <div className="mt-3 flex items-center justify-between">
+              <span className="text-xs text-zinc-500">
+                {left === null
+                  ? 'Open-ended session'
+                  : `Ends at ${new Date(session.endsAt ?? 0).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+              </span>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => sendToBackground({ type: 'STOP_SESSION' })}
+                data-testid="panel-stop">
+                Stop session
+              </Button>
             </div>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className={cn('p-4 rounded-xl text-center',
-                isLight ? 'bg-white shadow-sm' : 'bg-slate-800')}>
-                <Clock className={cn('mx-auto mb-2',
-                  isLight ? 'text-slate-600' : 'text-slate-400')} size={20} />
-                <div className={cn('text-2xl font-semibold',
-                  isLight ? 'text-slate-900' : 'text-white')}>
-                  {Math.floor(flowState.streak / 60)}m
-                </div>
-                <div className={cn('text-xs',
-                  isLight ? 'text-slate-600' : 'text-slate-400')}>
-                  Streak
-                </div>
-              </div>
-              <div className={cn('p-4 rounded-xl text-center',
-                isLight ? 'bg-white shadow-sm' : 'bg-slate-800')}>
-                <TrendingUp className={cn('mx-auto mb-2',
-                  isLight ? 'text-slate-600' : 'text-slate-400')} size={20} />
-                <div className={cn('text-2xl font-semibold',
-                  isLight ? 'text-slate-900' : 'text-white')}>
-                  {Math.round(flowState.focusQuality || 0)}%
-                </div>
-                <div className={cn('text-xs',
-                  isLight ? 'text-slate-600' : 'text-slate-400')}>
-                  Quality
-                </div>
-              </div>
+          </div>
+        ) : (
+          <div className="mt-2 flex flex-col gap-3">
+            <TextArea
+              rows={2}
+              value={goal}
+              maxLength={300}
+              placeholder="What do you want to get done? Be specific."
+              aria-label="Goal"
+              onChange={e => setGoal(e.target.value)}
+              data-testid="panel-goal-input"
+            />
+            <div className="flex gap-1" role="group" aria-label="Session length">
+              {DURATIONS.map(d => (
+                <Button
+                  key={d.value}
+                  size="sm"
+                  variant={minutes === d.value ? 'primary' : 'secondary'}
+                  className="flex-1"
+                  onClick={() => setMinutes(d.value)}>
+                  {d.label}
+                </Button>
+              ))}
             </div>
-
-            {/* Status Indicator */}
-            <div className={cn('p-4 rounded-xl',
-              flowState.status === 'flow'
-                ? 'bg-green-500/20 border border-green-500/30'
-                : 'bg-blue-500/20 border border-blue-500/30')}>
-              <div className="flex items-center gap-3">
-                <Activity className={
-                  flowState.status === 'flow' ? 'text-green-500' : 'text-blue-500'
-                } size={24} />
-                <div>
-                  <p className={cn('font-medium',
-                    isLight ? 'text-slate-900' : 'text-white')}>
-                    {flowState.status === 'flow' ? 'In the Zone!' : 'Keep Going'}
-                  </p>
-                  <p className={cn('text-xs',
-                    isLight ? 'text-slate-600' : 'text-slate-400')}>
-                    {flowState.status === 'flow'
-                      ? 'You\'re in peak flow state'
-                      : 'Building momentum...'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </>
+            {error ? <p className="text-xs text-red-700">{error}</p> : null}
+            <Button onClick={start} disabled={!goal.trim()} data-testid="panel-start">
+              Start focus session
+            </Button>
+          </div>
         )}
+      </Card>
 
-        {/* Actions */}
-        <button
-          onClick={() => chrome.tabs.create({ url: chrome.runtime.getURL('analytics/index.html') })}
-          className={cn('w-full py-3 rounded-xl font-medium transition-colors',
-            isLight
-              ? 'bg-blue-600 text-white hover:bg-blue-700'
-              : 'bg-blue-500 text-white hover:bg-blue-600')}
-        >
-          View Analytics
-        </button>
+      <FocusPrompt session={session} pendingLabel={pendingLabel} />
 
-        <button
-          onClick={exampleThemeStorage.toggle}
-          className={cn('w-full py-3 rounded-xl font-medium transition-colors',
-            isLight
-              ? 'bg-slate-200 text-slate-900 hover:bg-slate-300'
-              : 'bg-slate-700 text-white hover:bg-slate-600')}
-        >
-          Toggle Theme
-        </button>
-      </div>
-    </div>
+      <Card className="flex flex-col items-center gap-4">
+        <ScoreDial
+          score={session && session.flow.ticks > 0 ? session.flow.score : null}
+          status={session ? session.flow.status : null}
+          size={148}
+          active={Boolean(session)}
+        />
+        <div className="grid w-full grid-cols-4 gap-2 text-center">
+          <Stat
+            label={left === null ? 'Elapsed' : 'Left'}
+            value={session ? formatDuration(left ?? now - session.startedAt) : '—'}
+            testId="panel-timer"
+          />
+          <Stat label="Focused" value={session ? `${Math.round(session.focusedSec / 60)} min` : '—'} />
+          <Stat label="Streak" value={session ? `${Math.round(session.flow.streakSec / 60)} min` : '—'} />
+          <Stat label="Switches" value={session ? session.tabSwitches : '—'} />
+        </div>
+        {session ? <Sparkline points={session.timeline} width={320} height={40} testId="panel-sparkline" /> : null}
+      </Card>
+
+      {session ? (
+        <Card data-testid="tab-relevance">
+          <SectionTitle>Current tab</SectionTitle>
+          {relevance ? (
+            <div className="mt-2">
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="truncate text-sm font-medium text-zinc-900">{relevance.hostname}</span>
+                <span
+                  className={
+                    relevance.verdict === 'allow'
+                      ? 'text-accent text-xs font-medium'
+                      : relevance.verdict === 'block'
+                        ? 'text-xs font-medium text-red-700'
+                        : 'text-xs font-medium text-zinc-500'
+                  }
+                  data-testid="tab-verdict">
+                  {VERDICT_TEXT[relevance.verdict]}
+                </span>
+              </div>
+              <p className="mt-1 text-xs text-zinc-500">
+                {relevance.reason} · {METHOD_TEXT[relevance.method]}
+                {relevance.similarity !== null ? ` · similarity ${relevance.similarity.toFixed(2)}` : ''}
+              </p>
+            </div>
+          ) : (
+            <p className="mt-2 text-xs text-zinc-500">Open a web page to see whether it matches your goal.</p>
+          )}
+        </Card>
+      ) : null}
+
+      <p className="text-2xs text-center text-zinc-400">
+        Scores are computed on this device from activity counts and tab titles. Nothing is uploaded
+        {settings.ai.provider === 'gemini' ? ' except tiebreak questions to Gemini with your key' : ''}.
+      </p>
+    </main>
   );
 };
 
-export default withErrorBoundary(withSuspense(SidePanel, <LoadingSpinner />), ErrorDisplay);
+export default SidePanel;

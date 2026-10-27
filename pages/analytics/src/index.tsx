@@ -1,14 +1,7 @@
+import '@src/index.css';
+import Analytics from '@src/Analytics';
 import { createRoot } from 'react-dom/client';
-import Analytics from './Analytics';
-import './index.css';
 
-function init() {
-    const appContainer = document.querySelector('#app-container');
-    if (!appContainer) {
-        throw new Error('Can not find #app-container');
-    }
-    const root = createRoot(appContainer);
-    root.render(<Analytics />);
-}
-
-init();
+const container = document.querySelector('#app-container');
+if (!container) throw new Error('Can not find #app-container');
+createRoot(container).render(<Analytics />);

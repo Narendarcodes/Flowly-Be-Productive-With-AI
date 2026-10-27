@@ -1,0 +1,30 @@
+{
+  "name": "@extension/core",
+  "version": "2.0.0",
+  "description": "Flowly core: pure scoring, relevance, blocking-rule, AI-parsing and storage logic (no UI)",
+  "type": "module",
+  "private": true,
+  "sideEffects": false,
+  "types": "index.ts",
+  "main": "index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "clean:node_modules": "pnpx rimraf node_modules",
+    "clean:turbo": "rimraf .turbo",
+    "clean": "pnpm clean:turbo && pnpm clean:node_modules",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "lint:fix": "pnpm lint --fix",
+    "format": "prettier . --write --ignore-path ../../.prettierignore",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@extension/tsconfig": "workspace:*",
+    "vitest": "^3.2.4"
+  }
+}

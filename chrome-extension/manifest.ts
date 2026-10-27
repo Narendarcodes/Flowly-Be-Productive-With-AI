@@ -4,43 +4,34 @@ import type { ManifestType } from '@extension/shared';
 const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 /**
- * @prop default_locale
- * if you want to support multiple languages, you can use the following reference
- * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization
- *
- * @prop browser_specific_settings
- * Must be unique to your extension to upload to addons.mozilla.org
- * (you can delete if you only want a chrome extension)
- *
- * @prop permissions
- * Firefox doesn't support sidePanel (It will be deleted in manifest parser)
- *
- * @prop content_scripts
- * css: ['content.css'], // public folder
+ * Permissions are kept to what Flowly actually uses:
+ * - storage: settings, model weights, session history (all local)
+ * - tabs: read the active tab's URL/title for the goal-relevance check (during a session only)
+ * - alarms: periodic scoring tick that survives service-worker sleep
+ * - idle: active/idle signal for the focus score
+ * - declarativeNetRequest: redirect blocked sites to the blocked page
+ * - offscreen: run the on-device embedding model / Chrome built-in AI
+ * - notifications, sidePanel: UI
+ * host_permissions are http(s) only (no file://, no <all_urls>); they let the redirect rules and the
+ * activity-count content script apply, and allow the optional Gemini call with the user's own key.
  */
 const manifest = {
   manifest_version: 3,
   default_locale: 'en',
   name: '__MSG_extensionName__',
-  browser_specific_settings: {
-    gecko: {
-      id: 'flow-state-ai@assistant.com',
-      strict_min_version: '109.0',
-    },
-  },
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
-  host_permissions: ['<all_urls>'],
+  minimum_chrome_version: '116',
+  host_permissions: ['http://*/*', 'https://*/*'],
   permissions: [
     'storage',
-    'scripting',
     'tabs',
+    'alarms',
+    'idle',
+    'declarativeNetRequest',
+    'offscreen',
     'notifications',
     'sidePanel',
-    'activeTab',
-    'webNavigation',
-    'webRequest',
-    'declarativeNetRequest',
   ],
   options_page: 'options/index.html',
   background: {
@@ -50,40 +41,29 @@ const manifest = {
   action: {
     default_popup: 'popup/index.html',
     default_icon: 'icon-34.png',
-  },
-  chrome_url_overrides: {
-    newtab: 'new-tab/index.html',
+    default_title: 'Flowly',
   },
   icons: {
+    '34': 'icon-34.png',
     '128': 'icon-128.png',
   },
   content_scripts: [
     {
-      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+      // Counts key presses and pointer/scroll events (numbers only) — see PRIVACY.md.
+      matches: ['http://*/*', 'https://*/*'],
       js: ['content/all.iife.js'],
-    },
-    {
-      matches: ['https://example.com/*'],
-      js: ['content/example.iife.js'],
-    },
-    {
-      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-      js: ['content-ui/all.iife.js'],
-    },
-    {
-      matches: ['https://example.com/*'],
-      js: ['content-ui/example.iife.js'],
-    },
-    {
-      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
-      css: ['content.css'],
+      run_at: 'document_idle',
     },
   ],
-  devtools_page: 'devtools/index.html',
+  // ONNX Runtime needs WebAssembly compilation in extension pages (offscreen document).
+  content_security_policy: {
+    extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
+  },
   web_accessible_resources: [
     {
-      resources: ['*.js', '*.css', '*.svg', 'icon-128.png', 'icon-34.png', 'analytics/index.html', 'blocked.html'],
-      matches: ['*://*/*'],
+      // Required so declarativeNetRequest can redirect top-level navigations to the blocked page.
+      resources: ['blocked/index.html', 'blocked/assets/*'],
+      matches: ['http://*/*', 'https://*/*'],
     },
   ],
   side_panel: {

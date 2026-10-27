@@ -1,0 +1,27 @@
+{
+  "name": "@extension/offscreen",
+  "version": "2.0.0",
+  "description": "Flowly offscreen document: on-device embeddings (transformers.js) and Chrome built-in AI",
+  "type": "module",
+  "private": true,
+  "sideEffects": true,
+  "scripts": {
+    "clean:node_modules": "pnpx rimraf node_modules",
+    "clean:turbo": "rimraf .turbo",
+    "clean": "pnpm clean:turbo && pnpm clean:node_modules",
+    "build": "vite build",
+    "dev": "vite build --mode development",
+    "lint": "eslint .",
+    "lint:fix": "pnpm lint --fix",
+    "format": "prettier . --write --ignore-path ../../.prettierignore",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@extension/core": "workspace:*",
+    "@huggingface/transformers": "^3.7.6"
+  },
+  "devDependencies": {
+    "@extension/tsconfig": "workspace:*",
+    "@extension/vite-config": "workspace:*"
+  }
+}

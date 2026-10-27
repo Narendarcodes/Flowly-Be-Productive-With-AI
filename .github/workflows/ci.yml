@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Type-check, lint, unit tests, build, E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CEB_CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Type-check
+        run: pnpm type-check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Install Chromium for E2E
+        run: pnpm -F @extension/e2e exec playwright install --with-deps chromium
+
+      - name: E2E (headless Chromium with the built extension)
+        run: pnpm -F @extension/e2e e2e
+
+      - name: Upload extension build
+        uses: actions/upload-artifact@v4
+        with:
+          name: flowly-dist
+          path: dist
+          if-no-files-found: error
+          retention-days: 7

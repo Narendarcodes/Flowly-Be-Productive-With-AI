@@ -1,11 +1,11 @@
 {
   "extensionDescription": {
     "description": "Extension description",
-    "message": "AI-powered flow state detection and productivity enhancement assistant"
+    "message": "Focus sessions with on-device flow scoring and goal-aware distraction blocking."
   },
   "extensionName": {
     "description": "Extension name",
-    "message": "Flow-State AI Assistant"
+    "message": "Flowly"
   },
   "toggleTheme": {
     "message": "Toggle theme"

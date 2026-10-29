@@ -54,7 +54,7 @@ jobs:
         run: pnpm -F @extension/e2e e2e
 
       - name: Upload extension build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: flowly-dist
           path: dist

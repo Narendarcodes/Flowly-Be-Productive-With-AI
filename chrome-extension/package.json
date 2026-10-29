@@ -29,6 +29,6 @@
     "@extension/tsconfig": "workspace:*",
     "@extension/vite-config": "workspace:*",
     "@laynezh/vite-plugin-lib-assets": "^2.1.3",
-    "magic-string": "^0.30.17"
+    "magic-string": "^1.4.4"
   }
 }

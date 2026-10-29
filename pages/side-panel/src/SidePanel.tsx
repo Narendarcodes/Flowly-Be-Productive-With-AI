@@ -201,7 +201,7 @@ const SidePanel = () => {
                 <span
                   className={
                     relevance.verdict === 'allow'
-                      ? 'text-accent text-xs font-medium'
+                      ? 'text-xs font-medium text-accent'
                       : relevance.verdict === 'block'
                         ? 'text-xs font-medium text-red-700'
                         : 'text-xs font-medium text-zinc-500'
@@ -221,7 +221,7 @@ const SidePanel = () => {
         </Card>
       ) : null}
 
-      <p className="text-2xs text-center text-zinc-400">
+      <p className="text-center text-2xs text-zinc-400">
         Scores are computed on this device from activity counts and tab titles. Nothing is uploaded
         {settings.ai.provider === 'gemini' ? ' except tiebreak questions to Gemini with your key' : ''}.
       </p>

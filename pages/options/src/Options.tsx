@@ -259,7 +259,7 @@ const Options = () => {
           Save settings
         </Button>
         {saved ? (
-          <span className="text-accent text-sm" role="status" data-testid="options-saved">
+          <span className="text-sm text-accent" role="status" data-testid="options-saved">
             Saved
           </span>
         ) : null}

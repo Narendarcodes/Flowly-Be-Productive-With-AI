@@ -15,7 +15,7 @@ export const Sparkline = ({
     return (
       <div
         style={{ width, height }}
-        className="text-2xs flex items-center justify-center rounded border border-dashed border-zinc-200 text-zinc-400"
+        className="flex items-center justify-center rounded border border-dashed border-zinc-200 text-2xs text-zinc-400"
         data-testid={testId}
         data-empty="true">
         Focus trend appears after the first minute
@@ -58,7 +58,7 @@ export const BarChart = ({
         {data.map(d => (
           <div key={d.label} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
             <div
-              className={d.value > 0 ? 'bg-accent w-full rounded-sm' : 'w-full rounded-sm bg-zinc-200'}
+              className={d.value > 0 ? 'w-full rounded-sm bg-accent' : 'w-full rounded-sm bg-zinc-200'}
               style={{ height: Math.max(2, (d.value / max) * barArea) }}
               title={d.title ?? `${d.label}: ${Math.round(d.value)} ${unit}`}
               data-value={d.value}

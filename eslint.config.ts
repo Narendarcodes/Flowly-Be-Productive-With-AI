@@ -1,15 +1,16 @@
 import { fixupConfigRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
+import { defineConfig } from 'eslint/config';
 import { flatConfigs as importXFlatConfig } from 'eslint-plugin-import-x';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import reactPlugin from 'eslint-plugin-react';
 import { browser, es2020, node } from 'globals';
-import { config, configs as tsConfigs, parser as tsParser } from 'typescript-eslint';
+import { configs as tsConfigs, parser as tsParser } from 'typescript-eslint';
 import type { FixupConfigArray } from '@eslint/compat';
 
-export default config(
+export default defineConfig(
   // Shared configs
   js.configs.recommended,
   ...tsConfigs.recommended,
@@ -51,6 +52,11 @@ export default config(
     },
     rules: {
       'react/react-in-jsx-scope': 'off',
+      // React Compiler rules added in eslint-plugin-react-hooks v7. Existing code predates them;
+      // keep them visible as warnings until the components are migrated.
+      'react-hooks/refs': 'warn',
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/purity': 'warn',
       'react/prop-types': 'off',
       'prefer-const': 'error',
       'no-var': 'error',

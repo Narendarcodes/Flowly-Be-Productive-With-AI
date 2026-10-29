@@ -16,26 +16,24 @@ const copyOrtWasm = (): PluginOption => ({
   name: 'flowly-copy-ort-wasm',
   writeBundle() {
     const require = createRequire(import.meta.url);
-    // The package's exports map hides dist/, so locate it from the resolved entry point.
-    const distDir = dirname(require.resolve('@huggingface/transformers'));
+    // transformers.js bundles a specific onnxruntime-web build; resolve that exact copy.
+    const transformersEntry = require.resolve('@huggingface/transformers');
+    const ortWebDir = dirname(createRequire(transformersEntry).resolve('onnxruntime-web'));
     const ortDir = resolve(outDir, 'ort');
     mkdirSync(ortDir, { recursive: true });
-    copyFileSync(
-      resolve(distDir, 'ort-wasm-simd-threaded.jsep.mjs'),
-      resolve(ortDir, 'ort-wasm-simd-threaded.jsep.mjs'),
-    );
-    // Vite already emitted the .wasm as a hashed asset; move it (instead of shipping 21 MB twice).
+    // Vite emits the runtime's .wasm as a hashed asset. Its variant (jsep, asyncify, ...) decides which
+    // loader .mjs ONNX Runtime asks for, so move the .wasm under its canonical name and copy the loader.
     const assetsDir = resolve(outDir, 'assets');
-    const emitted = readdirSync(assetsDir).find(
-      f => f.startsWith('ort-wasm-simd-threaded.jsep') && f.endsWith('.wasm'),
-    );
-    if (emitted) {
-      renameSync(resolve(assetsDir, emitted), resolve(ortDir, 'ort-wasm-simd-threaded.jsep.wasm'));
-    } else {
-      copyFileSync(
-        resolve(distDir, 'ort-wasm-simd-threaded.jsep.wasm'),
-        resolve(ortDir, 'ort-wasm-simd-threaded.jsep.wasm'),
-      );
+    const emitted = readdirSync(assetsDir).filter(f => /^ort-wasm-simd-threaded.*\.wasm$/.test(f));
+    if (emitted.length === 0) throw new Error('flowly-copy-ort-wasm: no ONNX Runtime .wasm asset was emitted');
+    for (const file of emitted) {
+      const variant = file
+        .replace(/^ort-wasm-simd-threaded\.?/, '')
+        .replace(/-[\w-]+\.wasm$/, '')
+        .replace(/\.wasm$/, '');
+      const base = variant ? `ort-wasm-simd-threaded.${variant}` : 'ort-wasm-simd-threaded';
+      renameSync(resolve(assetsDir, file), resolve(ortDir, `${base}.wasm`));
+      copyFileSync(resolve(ortWebDir, `${base}.mjs`), resolve(ortDir, `${base}.mjs`));
     }
   },
 });

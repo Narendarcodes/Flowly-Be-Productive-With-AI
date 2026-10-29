@@ -61,7 +61,7 @@ const Popup = () => {
             <p className="truncate text-sm font-medium text-zinc-900" title={session.goal} data-testid="popup-goal">
               {session.goal}
             </p>
-            <div className="text-2xs mt-2 uppercase tracking-wide text-zinc-500">
+            <div className="mt-2 text-2xs uppercase tracking-wide text-zinc-500">
               {left === null ? 'Elapsed' : 'Left'}
             </div>
             <p className="text-lg font-semibold tabular-nums text-zinc-900" data-testid="popup-timer">

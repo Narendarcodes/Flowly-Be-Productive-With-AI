@@ -46,7 +46,7 @@ export const SectionTitle = ({ children, className }: { children: ReactNode; cla
 export const TextInput = ({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) => (
   <input
     className={cn(
-      'focus:border-accent h-9 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none',
+      'h-9 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-accent focus:outline-none',
       className,
     )}
     {...props}
@@ -56,7 +56,7 @@ export const TextInput = ({ className, ...props }: InputHTMLAttributes<HTMLInput
 export const TextArea = ({ className, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) => (
   <textarea
     className={cn(
-      'focus:border-accent w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none',
+      'w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-accent focus:outline-none',
       className,
     )}
     {...props}
